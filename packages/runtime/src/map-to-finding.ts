@@ -53,23 +53,28 @@ function locFromSource(
   };
 }
 
+function unmappedNote(confidence: "high" | "medium" | "low", mode: "jsx" | "url"): string {
+  if (confidence !== "low") return "";
+  return mode === "url"
+    ? " (DOM node could not be mapped to source — recorded against the page URL.)"
+    : " (DOM node could not be mapped to a JSX location — shown at file top.)";
+}
+
 export function axeHitsToFindings(
   hits: AxeNodeHit[],
   fallbackFile: string,
+  mode: "jsx" | "url" = "jsx",
 ): RuntimeFindingRaw[] {
   return hits.map((hit) => {
     const mapped = remediationForAxeRule(hit.axeRuleId);
     const loc = locFromSource(hit.sourceAttr, fallbackFile);
-    const unmappedNote =
-      loc.confidence === "low"
-        ? " (DOM node could not be mapped to a JSX location — shown at file top.)"
-        : "";
+    const note = unmappedNote(loc.confidence, mode);
     return {
       ruleId: normalizeAxeRuleId(hit.axeRuleId),
       pack: "runtime",
       severity: severityFromImpact(hit.impact),
       autofix: mapped.autofix,
-      message: `${hit.help}${unmappedNote}`,
+      message: `${hit.help}${note}`,
       remediation: mapped.remediation,
       education: hit.failureSummary,
       helpUrl: hit.helpUrl,
@@ -85,20 +90,18 @@ export function axeHitsToFindings(
 export function focusHitsToFindings(
   hits: FocusHit[],
   fallbackFile: string,
+  mode: "jsx" | "url" = "jsx",
 ): RuntimeFindingRaw[] {
   return hits.map((hit) => {
     const loc = locFromSource(hit.sourceAttr, fallbackFile);
-    const unmappedNote =
-      loc.confidence === "low"
-        ? " (DOM node could not be mapped to a JSX location — shown at file top.)"
-        : "";
+    const note = unmappedNote(loc.confidence, mode);
     if (hit.kind === "focus-order") {
       return {
         ruleId: "runtime-focus-order",
         pack: "runtime" as const,
         severity: "error" as const,
         autofix: "manual" as const,
-        message: `${hit.message}${unmappedNote}`,
+        message: `${hit.message}${note}`,
         remediation:
           "Ensure the DOM order of interactive elements matches the visual reading order. Avoid positive tabindex values that scramble Tab order.",
         wcag: ["2.4.3"],
@@ -113,7 +116,7 @@ export function focusHitsToFindings(
       pack: "runtime" as const,
       severity: "warning" as const,
       autofix: "suggest" as const,
-      message: `${hit.message}${unmappedNote}`,
+      message: `${hit.message}${note}`,
       remediation:
         "Do not remove focus indicators (outline: none without a replacement). Prefer PatternFly focus rings or a visible :focus-visible style.",
       wcag: ["2.4.7"],

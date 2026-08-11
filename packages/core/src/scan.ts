@@ -78,22 +78,48 @@ function resolveFiles(roots: string[], ignore: string[]): string[] {
 async function runRuntimeIfEnabled(
   options: ScanOptions,
 ): Promise<{ findings: Finding[]; errors: Array<{ file: string; message: string }> }> {
-  if (!options.runtime) return { findings: [], errors: [] };
+  const urls = options.urls ?? [];
+  const wantRuntime = Boolean(options.runtime || urls.length || options.at);
+  if (!wantRuntime) return { findings: [], errors: [] };
+
+  if (options.at && !options.runtime && urls.length === 0) {
+    return {
+      findings: [],
+      errors: [
+        {
+          file: "(at)",
+          message:
+            "--at requires a navigable page: pass --url <http...> and/or --runtime (CT mounts).",
+        },
+      ],
+    };
+  }
+
   try {
     const mod = (await import("@capya11y/runtime")) as {
       runRuntimeScan: (opts: {
-        roots: string[];
+        roots?: string[];
         ignore?: string[];
         cwd?: string;
+        urls?: string[];
+        mountComponents?: boolean;
+        at?: "auto" | "voiceover" | "nvda";
+        atMaxStops?: number;
+        urlWaitFor?: string;
       }) => Promise<{
         findings: Finding[];
         errors: Array<{ file: string; message: string }>;
       }>;
     };
     const result = await mod.runRuntimeScan({
-      roots: options.roots,
+      roots: options.runtime ? options.roots : [],
       ignore: options.ignore,
       cwd: process.cwd(),
+      urls,
+      mountComponents: Boolean(options.runtime),
+      at: options.at,
+      atMaxStops: options.atMaxStops,
+      urlWaitFor: options.urlWaitFor,
     });
     return {
       findings: result.findings.map((f) => ({
@@ -201,7 +227,9 @@ export async function scan(options: ScanOptions): Promise<ScanResult> {
     packs: [
       ...new Set([
         ...rules.map((r) => r.pack),
-        ...(options.runtime ? (["runtime"] as const) : []),
+        ...(options.runtime || (options.urls?.length ?? 0) > 0 || options.at
+          ? (["runtime"] as const)
+          : []),
       ]),
     ],
     exceptions,

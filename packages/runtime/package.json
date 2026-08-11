@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "@axe-core/playwright": "^4.10.1",
+    "@guidepup/guidepup": "^0.24.1",
     "@playwright/experimental-ct-react": "^1.51.0",
     "axe-core": "^4.10.3",
     "esbuild": "^0.25.0",

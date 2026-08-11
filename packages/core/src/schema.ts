@@ -120,6 +120,12 @@ export const ConfigSchema = z.object({
   ignoreRules: z.array(IgnoreRuleSchema).default([]),
   /** Enable CT + axe + tabbable runtime scan (also `--runtime`). */
   runtime: z.boolean().default(false),
+  /** Live URLs to scan with Playwright (also `--url`). */
+  urls: z.array(z.string().url()).default([]),
+  /** Guidepup screen reader: auto | voiceover | nvda */
+  at: z.enum(["auto", "voiceover", "nvda"]).optional(),
+  urlWaitFor: z.string().default("body"),
+  atMaxStops: z.number().int().positive().default(40),
 });
 
 export type CapyConfig = z.infer<typeof ConfigSchema>;

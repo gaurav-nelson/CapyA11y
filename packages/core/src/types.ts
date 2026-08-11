@@ -33,7 +33,7 @@ export interface Finding {
   confidence: "high" | "medium" | "low";
   /** How the finding was produced. Defaults to static AST when omitted. */
   origin?: "static" | "runtime";
-  engine?: "ast" | "axe" | "tabbable";
+  engine?: "ast" | "axe" | "tabbable" | "guidepup";
   /** CSS selector from runtime engines (debug). */
   selector?: string;
 }
@@ -56,8 +56,14 @@ export interface ScanOptions {
   patternflyVersion?: "v5" | "v6";
   checks?: ChecksConfig;
   ignoreRules?: IgnoreRuleConfig[];
-  /** When true, also run Playwright CT + axe + tabbable runtime scan. */
+  /** When true, mount TSX via Playwright CT + axe + tabbable. */
   runtime?: boolean;
+  /** Live app URLs (Playwright page.goto + axe/tabbable). */
+  urls?: string[];
+  /** Guidepup AT: auto | voiceover | nvda */
+  at?: "auto" | "voiceover" | "nvda";
+  urlWaitFor?: string;
+  atMaxStops?: number;
 }
 
 export interface ScanResult {

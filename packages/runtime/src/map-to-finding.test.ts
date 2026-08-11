@@ -69,6 +69,22 @@ describe("axeHitsToFindings", () => {
     expect(findings[0]?.confidence).toBe("low");
     expect(findings[0]?.message).toMatch(/could not be mapped/);
   });
+
+  it("uses URL unmapped wording", () => {
+    const findings = axeHitsToFindings(
+      [
+        {
+          axeRuleId: "color-contrast",
+          help: "contrast",
+          impact: "serious",
+          target: ["p"],
+        },
+      ],
+      "http://localhost:3000/",
+      "url",
+    );
+    expect(findings[0]?.message).toMatch(/page URL/);
+  });
 });
 
 describe("focusHitsToFindings", () => {

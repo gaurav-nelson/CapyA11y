@@ -1,11 +1,24 @@
+import type { AtEngine } from "./at-heuristics.js";
+
 export interface RuntimeScanOptions {
-  roots: string[];
+  /** Component roots for CT mounts (used when mountComponents is true). */
+  roots?: string[];
   ignore?: string[];
   cwd?: string;
+  /** Live app URLs to scan with Playwright page.goto. */
+  urls?: string[];
+  /** Mount TSX/JSX via CT-style isolation (default: true when roots provided). */
+  mountComponents?: boolean;
   /** Include axe-core checks (default true). */
   includeAxe?: boolean;
   /** Include tabbable focus-order / focus-visible checks (default true). */
   includeFocus?: boolean;
+  /** Guidepup AT: auto | voiceover | nvda */
+  at?: AtEngine;
+  /** Max SR cursor moves (default 40). */
+  atMaxStops?: number;
+  /** CSS selector to wait for on URL pages (default body). */
+  urlWaitFor?: string;
 }
 
 export interface SourceLoc {
@@ -37,7 +50,7 @@ export interface RuntimeFindingRaw {
   elementName: string;
   confidence: "high" | "medium" | "low";
   origin: "runtime";
-  engine: "axe" | "tabbable";
+  engine: "axe" | "tabbable" | "guidepup";
   selector?: string;
 }
 

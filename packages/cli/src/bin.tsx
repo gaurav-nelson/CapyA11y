@@ -71,6 +71,13 @@ function emitScanFormats(result: ScanResult, flags: CliFlags) {
   }
 }
 
+function emitRuntimeErrors(result: ScanResult) {
+  if (!result.runtimeErrors?.length) return;
+  for (const e of result.runtimeErrors) {
+    process.stderr.write(`runtime: ${e.file}: ${e.message}\n`);
+  }
+}
+
 async function main() {
   const { command, positionals: rest, flags } = parseArgs(process.argv.slice(2));
 
@@ -199,17 +206,33 @@ async function main() {
     return;
   }
 
-  const target = rest[0] ?? ".";
+  const urls =
+    flags.url !== undefined
+      ? flags.url
+        ? [flags.url]
+        : []
+      : config.urls?.length
+        ? config.urls
+        : [];
+  const at = flags.at ?? config.at;
+  const urlWaitFor = flags.urlWaitFor ?? config.urlWaitFor;
+  // Path optional when --url is set
+  const target = rest[0] ?? (urls.length > 0 ? undefined : ".");
+  const roots = target ? [target] : [];
   const ignore = [...new Set([...DEFAULT_IGNORE, ...config.ignore])];
   const runtime = flags.runtime || config.runtime;
   const scanOpts = {
-    roots: [target],
+    roots,
     packs,
     ignore,
     checks,
     ignoreRules,
     patternflyVersion,
     runtime,
+    urls,
+    at,
+    urlWaitFor,
+    atMaxStops: config.atMaxStops,
   };
 
   if (command === "pr") {
@@ -274,7 +297,7 @@ async function main() {
     const text = flags.json
       ? JSON.stringify(scanned, null, 2) + "\n"
       : formatEvidenceReport(scanned, undefined, {
-          product: target,
+          product: target ?? urls[0] ?? ".",
         });
     emit(text, flags.out);
     if (shouldFail(scanned, failOn)) process.exitCode = 1;
@@ -284,6 +307,7 @@ async function main() {
   if (command === "scan") {
     if (usePlain) {
       const result = await scan(scanOpts);
+      emitRuntimeErrors(result);
       if (flags.suggest && !flags.sarif && !flags.evidence && !flags.json && flags.formats.length === 0) {
         const suggestions = suggestLabels(result.findings);
         emit(JSON.stringify({ scan: result, suggestions }, null, 2) + "\n", flags.out);
@@ -295,13 +319,16 @@ async function main() {
     }
     const { waitUntilExit } = render(
       <ScanView
-        roots={[target]}
+        roots={roots.length ? roots : ["."]}
         packs={packs}
         ignore={ignore}
         checks={checks}
         ignoreRules={ignoreRules}
         patternflyVersion={patternflyVersion}
         runtime={runtime}
+        urls={urls}
+        at={at}
+        urlWaitFor={urlWaitFor}
         theme={theme}
       />,
     );
@@ -321,7 +348,12 @@ async function main() {
       if (flags.evidence || flags.formats.some((f) => f.format === "evidence")) {
         const evidenceOut =
           flags.formats.find((f) => f.format === "evidence")?.out ?? flags.out;
-        emit(formatEvidenceReport(scanned, result, { product: target }), evidenceOut);
+        emit(
+          formatEvidenceReport(scanned, result, {
+            product: target ?? urls[0] ?? ".",
+          }),
+          evidenceOut,
+        );
       } else {
         emit(formatReport(result, flags.json ? "json" : "plain"), flags.out);
       }
@@ -329,7 +361,7 @@ async function main() {
     }
     const { waitUntilExit } = render(
       <FixView
-        roots={[target]}
+        roots={roots.length ? roots : ["."]}
         packs={packs}
         ignore={ignore}
         checks={checks}

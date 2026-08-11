@@ -25,6 +25,9 @@ export interface CliFlags {
   formats: FormatEmitter[];
   allowDirty: boolean;
   runtime: boolean;
+  url?: string;
+  urlWaitFor?: string;
+  at?: "auto" | "voiceover" | "nvda";
 }
 
 export interface ParsedCli {
@@ -103,6 +106,24 @@ export function parseArgs(argv: string[]): ParsedCli {
       flags.allowDirty = true;
     } else if (arg === "--runtime") {
       flags.runtime = true;
+    } else if (arg === "--url") {
+      flags.url = argv[++i];
+    } else if (arg.startsWith("--url=")) {
+      flags.url = arg.slice("--url=".length);
+    } else if (arg === "--url-wait-for") {
+      flags.urlWaitFor = argv[++i];
+    } else if (arg.startsWith("--url-wait-for=")) {
+      flags.urlWaitFor = arg.slice("--url-wait-for=".length);
+    } else if (arg === "--at") {
+      const next = argv[i + 1];
+      if (next && !next.startsWith("-") && ["auto", "voiceover", "nvda"].includes(next)) {
+        flags.at = argv[++i] as "auto" | "voiceover" | "nvda";
+      } else {
+        flags.at = "auto";
+      }
+    } else if (arg.startsWith("--at=")) {
+      const v = arg.slice("--at=".length) as "auto" | "voiceover" | "nvda";
+      flags.at = ["auto", "voiceover", "nvda"].includes(v) ? v : "auto";
     } else if (arg === "--do-not-auto-add-defaults") {
       flags.doNotAutoAddDefaults = true;
     } else if (arg === "--theme") {
@@ -203,7 +224,11 @@ export const HELP = `
     --out <file>             Write current --format output to file
     --theme <auto|high-contrast>
     --allow-dirty            Allow \`capya11y pr\` on a dirty git tree
-    --runtime                Also mount TSX via Playwright CT + axe + tabbable
+    --runtime                Mount TSX via Playwright CT + axe + tabbable
+    --url <http(s)://...>    Live app scan (axe + tabbable; path optional)
+    --url-wait-for <sel>     Wait for selector before URL checks (default: body)
+    --at [auto|voiceover|nvda]
+                             Guidepup VoiceOver (macOS) / NVDA (Windows)
 
   Examples
     $ capya11y scan ./src
@@ -211,6 +236,8 @@ export const HELP = `
     $ capya11y scan . --format sarif --out capya11y.sarif --format evidence --out evidence.md
     $ capya11y scan . --exclude pf-is-aria-disabled --plain
     $ capya11y scan packages/fixtures/demo/RuntimeBroken.tsx --runtime --plain
+    $ capya11y scan --url http://localhost:5173 --plain
+    $ capya11y scan ./src --runtime --url http://localhost:3000 --at=auto --plain
     $ capya11y rules list --pack patternfly-v6
     $ capya11y pr packages/fixtures/demo --safe --dry-run
     $ capya11y explain pf-button-icon-only-name

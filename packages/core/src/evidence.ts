@@ -145,7 +145,7 @@ export function formatEvidenceReport(
         : "No runtime findings in this report. Pass `--runtime` to mount components with Playwright CT + axe-core + tabbable.",
     );
   } else {
-    lines.push("| File | Engine | Rule | Remediation |");
+    lines.push("| File / URL | Engine | Rule | Remediation |");
     lines.push("| --- | --- | --- | --- |");
     for (const f of runtimeFindings.slice(0, 80)) {
       lines.push(
@@ -168,10 +168,10 @@ export function formatEvidenceReport(
 
   lines.push("## Notes for VPAT / Section 508 engineering", "");
   lines.push(
-    "- This report reflects **static AST analysis** (WCAG Core + PatternFly packs) and, when `--runtime` is enabled, **Playwright component isolation + axe-core + tabbable**.",
+    "- This report reflects **static AST analysis** (WCAG Core + PatternFly packs) and, when enabled, **Playwright CT (`--runtime`)**, **live URL (`--url`)**, **axe-core + tabbable**, and optional **Guidepup VoiceOver/NVDA (`--at`)**.",
   );
   lines.push(
-    "- It does **not** replace Guidepup/VoiceOver/NVDA simulation, full manual AT verification, or a complete ACR claim.",
+    "- Guidepup AT is OS-bound (macOS VoiceOver / Windows NVDA) and does **not** replace a full manual AT audit or ACR claim.",
   );
   lines.push(
     "- Accepted exceptions require a documented reason (config `ignoreRules` or `capya11y-ignore` comments).",

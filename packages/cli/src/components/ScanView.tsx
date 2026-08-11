@@ -20,6 +20,9 @@ export function ScanView({
   ignoreRules,
   patternflyVersion,
   runtime,
+  urls,
+  at,
+  urlWaitFor,
   theme,
   onDone,
 }: {
@@ -30,6 +33,9 @@ export function ScanView({
   ignoreRules?: IgnoreRuleConfig[];
   patternflyVersion?: "v5" | "v6";
   runtime?: boolean;
+  urls?: string[];
+  at?: "auto" | "voiceover" | "nvda";
+  urlWaitFor?: string;
   theme: Theme;
   onDone?: (result: ScanResult) => void;
 }) {
@@ -49,6 +55,9 @@ export function ScanView({
           ignoreRules,
           patternflyVersion,
           runtime,
+          urls,
+          at,
+          urlWaitFor,
         });
         if (!cancelled) {
           setResult(r);
