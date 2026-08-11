@@ -6,6 +6,10 @@ coverage/
 .capya11y.yml
 *.tsbuildinfo
 .pnpm-store/
+evidence.md
+capya11y-evidence.md
+capya11y.sarif
+*.sarif
 packages/*/src/**/*.js
 packages/*/src/**/*.js.map
 packages/*/src/**/*.d.ts
