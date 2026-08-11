@@ -1,4 +1,5 @@
-import type { AutofixTier, Severity } from "./schema.js";
+import type { AutofixTier, ChecksConfig, IgnoreRuleConfig, Severity } from "./schema.js";
+import type { AcceptedException } from "./suppressions.js";
 
 export interface SourceRange {
   startLine: number;
@@ -21,6 +22,7 @@ export interface Finding {
   severity: Severity;
   autofix: AutofixTier;
   message: string;
+  remediation: string;
   education?: string;
   helpUrl?: string;
   wcag: string[];
@@ -47,6 +49,8 @@ export interface ScanOptions {
   ignore?: string[];
   configPath?: string;
   patternflyVersion?: "v5" | "v6";
+  checks?: ChecksConfig;
+  ignoreRules?: IgnoreRuleConfig[];
 }
 
 export interface ScanResult {
@@ -54,4 +58,5 @@ export interface ScanResult {
   filesScanned: number;
   rulesLoaded: number;
   packs: string[];
+  exceptions: AcceptedException[];
 }

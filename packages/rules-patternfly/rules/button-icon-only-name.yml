@@ -3,22 +3,14 @@ pack: patternfly-v6
 severity: error
 wcag: ["4.1.2"]
 autofix: suggest
-message: >
-  Icon-only PatternFly Button needs an accessible name via aria-label
-  or aria-labelledby.
+template: icon-only-name
+params:
+  component: Button
+  from: "@patternfly/react-core"
 helpUrl: https://www.patternfly.org/components/button/accessibility
 education: >
   Screen readers announce buttons by accessible name. Icon-only
   controls have no text node, so provide aria-label.
-detect:
-  component: Button
-  from: "@patternfly/react-core"
-  when:
-    noVisibleText: true
-    missingAnyOfProps: ["aria-label", "aria-labelledby"]
-fix:
-  addProp:
-    aria-label: "{{inferFromIconOrContext}}"
 example:
   before: |
     <Button variant="plain"><SearchIcon /></Button>

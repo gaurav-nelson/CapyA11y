@@ -18,8 +18,9 @@ export {
   defaultPackDirs,
   findRuleById,
   resolvePackIdForVersion,
+  listPackManifests,
 } from "./load-rules.js";
-export type { PackManifest } from "./load-rules.js";
+export type { PackManifest, LoadPacksOptions } from "./load-rules.js";
 export { loadConfig, writeDefaultConfig } from "./config.js";
 export { explainRule } from "./explain.js";
 export {
@@ -28,6 +29,9 @@ export {
   SeveritySchema,
   AutofixTierSchema,
   DEFAULT_IGNORE,
+  filterRulesByChecks,
+  ChecksConfigSchema,
+  IgnoreRuleSchema,
 } from "./schema.js";
 export type {
   Rule,
@@ -36,6 +40,8 @@ export type {
   AutofixTier,
   DetectWhen,
   FixSpec,
+  ChecksConfig,
+  IgnoreRuleConfig,
 } from "./schema.js";
 export type {
   Finding,
@@ -47,3 +53,6 @@ export type {
 } from "./types.js";
 export type { ExplainResult } from "./explain.js";
 export type { ApplyOptions } from "./fix.js";
+export { applySuppressions, parseSuppressionComments } from "./suppressions.js";
+export type { AcceptedException } from "./suppressions.js";
+export { listTemplates, resolveTemplateRule, TEMPLATES } from "./templates/index.js";

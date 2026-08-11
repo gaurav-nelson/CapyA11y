@@ -10,6 +10,7 @@ const sampleFinding: Finding = {
   severity: "error",
   autofix: "safe",
   message: "Toast AlertGroup should set isLiveRegion",
+  remediation: "Add isLiveRegion to AlertGroup.",
   education: "Live regions announce status.",
   helpUrl: "https://www.patternfly.org/components/alert/accessibility",
   wcag: ["4.1.3"],
@@ -25,6 +26,7 @@ const suggestFinding: Finding = {
   ruleId: "pf-button-icon-only-name",
   autofix: "suggest",
   message: "Icon-only Button needs aria-label",
+  remediation: "Add a descriptive aria-label.",
   wcag: ["4.1.2"],
   elementName: "Button",
   fix: {
@@ -40,6 +42,7 @@ const scan: ScanResult = {
   filesScanned: 1,
   rulesLoaded: 2,
   packs: ["patternfly-v6"],
+  exceptions: [],
 };
 
 describe("formatSarif", () => {
@@ -48,15 +51,38 @@ describe("formatSarif", () => {
     expect(sarif.version).toBe("2.1.0");
     expect(sarif.runs[0].results).toHaveLength(2);
     expect(sarif.runs[0].tool.driver.rules[0].id).toBeTruthy();
+    expect(sarif.runs[0].tool.driver.rules[0].help.text).toContain("isLiveRegion");
   });
 });
 
 describe("formatEvidenceReport", () => {
-  it("includes WCAG table and VPAT notes", () => {
+  it("includes WCAG table, ACR snapshot, and VPAT notes", () => {
     const md = formatEvidenceReport(scan);
     expect(md).toContain("WCAG criteria coverage");
+    expect(md).toContain("ACR-oriented");
     expect(md).toContain("4.1.3");
     expect(md).toContain("Section 508");
+    expect(md).toContain("Accepted exceptions");
+  });
+
+  it("lists accepted exceptions", () => {
+    const withEx: ScanResult = {
+      ...scan,
+      exceptions: [
+        {
+          ruleId: "pf-is-aria-disabled",
+          file: "App.tsx",
+          range: sampleFinding.range,
+          reason: "Legacy control pending redesign",
+          source: "config",
+          elementName: "Button",
+          message: "Use isAriaDisabled",
+        },
+      ],
+    };
+    const md = formatEvidenceReport(withEx);
+    expect(md).toContain("Legacy control pending redesign");
+    expect(md).toContain("pf-is-aria-disabled");
   });
 });
 

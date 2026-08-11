@@ -34,6 +34,7 @@ export function formatFindingsPlain(findings: Finding[]): string {
       `  ${severityLabel(f.severity)} ${f.range.startLine}:${f.range.startColumn}  ${f.ruleId}${wcag}${fix}`,
     );
     lines.push(`      ${f.message}`);
+    if (f.remediation) lines.push(`      Remediation: ${f.remediation}`);
     if (f.helpUrl) lines.push(`      Help: ${f.helpUrl}`);
   }
   lines.push("");
@@ -66,6 +67,7 @@ export function formatScanMarkdown(result: ScanResult): string {
       `- **${severityLabel(f.severity)}** \`${f.ruleId}\` (L${f.range.startLine}) — ${f.message}`,
     );
     if (f.wcag.length) lines.push(`  - WCAG: ${f.wcag.map((c) => `\`${c}\``).join(", ")}`);
+    if (f.remediation) lines.push(`  - Remediation: ${f.remediation}`);
     if (f.helpUrl) lines.push(`  - [Learn more](${f.helpUrl})`);
     if (f.education) lines.push(`  - ${f.education}`);
   }
@@ -110,6 +112,7 @@ export function formatReport(
       filesScanned: 0,
       rulesLoaded: 0,
       packs: [],
+      exceptions: [],
     };
     if (format === "markdown") return formatScanMarkdown(asScan);
     if (format === "sarif") return formatSarif(asScan);
@@ -129,6 +132,7 @@ export function formatReport(
         filesScanned: 0,
         rulesLoaded: 0,
         packs: [],
+        exceptions: [],
       },
       data,
     );

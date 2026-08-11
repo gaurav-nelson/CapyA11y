@@ -1,7 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { Box, Text, useApp } from "ink";
 import Spinner from "ink-spinner";
-import { applyFixes, scan, type ApplyResult } from "@capya11y/core";
+import {
+  applyFixes,
+  scan,
+  type ApplyResult,
+  type ChecksConfig,
+  type IgnoreRuleConfig,
+} from "@capya11y/core";
 import { BrandHeader } from "./BrandHeader.js";
 import type { Theme } from "../theme/tokens.js";
 
@@ -9,6 +15,9 @@ export function FixView({
   roots,
   packs,
   ignore,
+  checks,
+  ignoreRules,
+  patternflyVersion,
   theme,
   dryRun,
   mode,
@@ -17,6 +26,9 @@ export function FixView({
   roots: string[];
   packs?: string[];
   ignore?: string[];
+  checks?: ChecksConfig;
+  ignoreRules?: IgnoreRuleConfig[];
+  patternflyVersion?: "v5" | "v6";
   theme: Theme;
   dryRun: boolean;
   mode: "safe" | "all";
@@ -32,7 +44,14 @@ export function FixView({
     (async () => {
       try {
         setPhase("Scanning…");
-        const scanned = await scan({ roots, packs, ignore });
+        const scanned = await scan({
+          roots,
+          packs,
+          ignore,
+          checks,
+          ignoreRules,
+          patternflyVersion,
+        });
         if (cancelled) return;
         setPhase(dryRun ? "Building patches…" : "Applying safe fixes…");
         const applied = await applyFixes({

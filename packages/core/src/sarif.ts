@@ -22,10 +22,12 @@ export function formatSarif(result: ScanResult): string {
               name: f.ruleId,
               shortDescription: { text: f.message },
               fullDescription: { text: f.education ?? f.message },
+              help: { text: f.remediation || f.message },
               helpUri: f.helpUrl,
               properties: {
                 tags: ["accessibility", ...f.wcag.map((c) => `WCAG-${c}`), f.pack],
                 autofix: f.autofix,
+                remediation: f.remediation,
               },
               defaultConfiguration: {
                 level: f.severity === "error" ? "error" : f.severity === "warning" ? "warning" : "note",

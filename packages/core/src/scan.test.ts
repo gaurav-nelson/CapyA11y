@@ -58,6 +58,30 @@ export function Sample() {
     expect(ids).toContain("wcag-img-missing-alt");
     expect(ids).toContain("pf-alert-toast-live-region");
     expect(ids).toContain("pf-button-icon-only-name");
+    expect(result.exceptions).toEqual([]);
+    expect(result.findings.every((f) => f.remediation.length > 0)).toBe(true);
+  });
+
+  it("respects checks.exclude", async () => {
+    const dir = tempFile(
+      "Sample.tsx",
+      `
+import { AlertGroup } from "@patternfly/react-core";
+export function Sample() {
+  return <AlertGroup isToast><span /></AlertGroup>;
+}
+`,
+    );
+    const result = await scan({
+      roots: [dir],
+      packs: ["patternfly-v6"],
+      checks: {
+        doNotAutoAddDefaults: false,
+        include: [],
+        exclude: ["pf-alert-toast-live-region"],
+      },
+    });
+    expect(result.findings.map((f) => f.ruleId)).not.toContain("pf-alert-toast-live-region");
   });
 
   it("detects clickable non-interactive and poor link text", async () => {

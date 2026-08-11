@@ -15,6 +15,8 @@ pnpm capya11y fix packages/fixtures/demo/BrokenPage.tsx --safe --dry-run
 pnpm capya11y explain pf-alert-toast-live-region --plain
 pnpm capya11y suggest packages/fixtures/demo --json
 pnpm capya11y report packages/fixtures/demo --out evidence.md
+pnpm capya11y rules list --pack patternfly-v6
+pnpm capya11y pr packages/fixtures/demo --safe --dry-run
 ```
 
 ## Commands
@@ -27,6 +29,9 @@ pnpm capya11y report packages/fixtures/demo --out evidence.md
 | `capya11y suggest <path>` | Propose suggest-tier labels (never auto-applies) |
 | `capya11y report <path>` | Evidence / VPAT markdown report |
 | `capya11y explain <rule-id>` | Just-in-time learning |
+| `capya11y rules list` | Catalog loaded rules |
+| `capya11y packs list` | List rule packs |
+| `capya11y pr <path> --safe` | Local Fix-PR (branch + `gh pr create`) |
 | `capya11y init` | Create `.capya11y.yml` + demo tips |
 
 ### CI / machine flags
@@ -36,8 +41,10 @@ pnpm capya11y report packages/fixtures/demo --out evidence.md
 | `--json` | Agent / script consumption |
 | `--sarif` | GitHub Code Scanning |
 | `--evidence` | Evidence markdown on scan |
+| `--format <name>` | Repeatable: `plain`, `json`, `sarif`, `evidence`, `markdown` |
 | `--fail-on error\|warning\|never` | CI gate |
-| `--out <file>` | Write report to disk |
+| `--out <file>` | Write current `--format` output to disk |
+| `--include` / `--exclude` | Rule governance (exclude wins) |
 | `--pack <name>` | `wcag-core`, `patternfly-v6`, `pf`, … |
 | `--patternfly-version v6` | Pack version selection |
 | `--plain` / `NO_COLOR=1` | Accessible non-TUI output |
@@ -61,7 +68,8 @@ pnpm capya11y report packages/fixtures/demo --out evidence.md
 ## Docs
 
 - [Architecture](docs/architecture.md)
-- [Rule authoring](docs/rule-authoring.md)
+- [Rule authoring](docs/rule-authoring.md) — templates, include/exclude, ignore-with-reason
+- [Pre-commit](docs/pre-commit.md)
 - [TUI theme](docs/tui-theme.md)
 - [Demo script](docs/demo-script.md)
-- [CI & evidence](docs/ci-and-evidence.md)
+- [CI & evidence](docs/ci-and-evidence.md) — multi-format scan, ACR snapshot, local Fix-PR

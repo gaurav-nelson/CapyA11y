@@ -31,6 +31,12 @@ export function FindingRow({ finding, theme }: { finding: Finding; theme: Theme 
         </Text>
       </Box>
       <Text> {finding.message}</Text>
+      {finding.remediation ? (
+        <Text color={theme.colorEnabled ? theme.muted : undefined}>
+          {" "}
+          → {finding.remediation}
+        </Text>
+      ) : null}
     </Box>
   );
 }

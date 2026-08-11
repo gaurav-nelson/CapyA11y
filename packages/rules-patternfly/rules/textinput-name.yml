@@ -3,6 +3,10 @@ pack: patternfly-v6
 severity: error
 wcag: ["1.3.1", "4.1.2"]
 autofix: suggest
+template: unlabeled-control
+params:
+  component: TextInput
+  from: "@patternfly/react-core"
 message: >
   TextInput needs an accessible name via FormGroup label, aria-label,
   or aria-labelledby.
@@ -10,11 +14,3 @@ helpUrl: https://www.patternfly.org/components/text-input/accessibility
 education: >
   Prefer FormGroup with fieldId. Use aria-label only when a visible
   label is not practical.
-detect:
-  component: TextInput
-  from: "@patternfly/react-core"
-  when:
-    unlabeledControl: true
-fix:
-  addProp:
-    aria-label: "{{inferPurpose}}"

@@ -1,10 +1,11 @@
-import { existsSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { resolve, relative } from "node:path";
 import { glob } from "glob";
 import { Project } from "ts-morph";
 import { defaultPackDirs, loadPacks } from "./load-rules.js";
 import { collectJsxElements, elementMatchesRule, getElementName } from "./match.js";
 import { DEFAULT_IGNORE, type Rule } from "./schema.js";
+import { applySuppressions } from "./suppressions.js";
 import type { Finding, FixPatch, ScanOptions, ScanResult } from "./types.js";
 
 function buildFixPatch(rule: Rule): FixPatch | undefined {
@@ -49,6 +50,13 @@ function buildFixPatch(rule: Rule): FixPatch | undefined {
   return undefined;
 }
 
+function defaultRemediation(rule: Rule, fix?: FixPatch): string {
+  if (rule.remediation?.trim()) return rule.remediation.trim();
+  if (fix?.description) return fix.description;
+  if (rule.education?.trim()) return rule.education.trim().split("\n")[0]!.trim();
+  return rule.message.trim();
+}
+
 function resolveFiles(roots: string[], ignore: string[]): string[] {
   const files = new Set<string>();
   for (const root of roots) {
@@ -71,6 +79,7 @@ export async function scan(options: ScanOptions): Promise<ScanResult> {
   const packDirs = options.packDirs?.length ? options.packDirs : defaultPackDirs();
   const rules = loadPacks(packDirs, options.packs, {
     patternflyVersion: options.patternflyVersion,
+    checks: options.checks,
   });
   const ignore = options.ignore ?? DEFAULT_IGNORE;
   const files = resolveFiles(options.roots, ignore);
@@ -78,17 +87,20 @@ export async function scan(options: ScanOptions): Promise<ScanResult> {
   const project = new Project({
     skipAddingFilesFromTsConfig: true,
     compilerOptions: {
-      jsx: 4, // React
+      jsx: 4,
       allowJs: true,
       target: 99,
     },
   });
 
   const findings: Finding[] = [];
+  const sourceByFile = new Map<string, string>();
   const cwd = process.cwd();
 
   for (const file of files) {
     const sourceFile = project.addSourceFileAtPath(file);
+    const rel = relative(cwd, file);
+    sourceByFile.set(rel, readFileSync(file, "utf8"));
     const elements = collectJsxElements(sourceFile);
 
     for (const el of elements) {
@@ -105,10 +117,11 @@ export async function scan(options: ScanOptions): Promise<ScanResult> {
           severity: rule.severity,
           autofix: rule.autofix,
           message: rule.message.trim(),
+          remediation: defaultRemediation(rule, fix),
           education: rule.education?.trim(),
           helpUrl: rule.helpUrl,
           wcag: rule.wcag,
-          file: relative(cwd, file),
+          file: rel,
           range: {
             startLine: startPos.line,
             startColumn: startPos.column,
@@ -128,10 +141,16 @@ export async function scan(options: ScanOptions): Promise<ScanResult> {
     return a.range.startLine - b.range.startLine;
   });
 
+  const { findings: active, exceptions } = applySuppressions(findings, {
+    ignoreRules: options.ignoreRules ?? [],
+    sourceByFile,
+  });
+
   return {
-    findings,
+    findings: active,
     filesScanned: files.length,
     rulesLoaded: rules.length,
     packs: [...new Set(rules.map((r) => r.pack))],
+    exceptions,
   };
 }

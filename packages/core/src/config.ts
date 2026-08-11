@@ -20,6 +20,14 @@ export function writeDefaultConfig(cwd = process.cwd()): string {
     packs: ["wcag-core", "patternfly-v6"],
     autofix: "safe",
     theme: "auto",
+    failOn: "error",
+    patternflyVersion: "v6",
+    checks: {
+      doNotAutoAddDefaults: false,
+      include: [],
+      exclude: [],
+    },
+    ignoreRules: [],
   });
   writeFileSync(path, stringifyYaml(config), "utf8");
   return path;

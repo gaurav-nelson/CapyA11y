@@ -3,17 +3,10 @@ pack: patternfly-v6
 severity: error
 wcag: ["1.1.1"]
 autofix: suggest
-message: >
-  Avatar requires an alt attribute describing the user or marking
-  the image decorative with alt="".
+template: missing-alt
+params:
+  component: Avatar
+  from: "@patternfly/react-core"
 helpUrl: https://www.patternfly.org/components/avatar/accessibility
 education: >
   Avatar renders an img; alt is required for non-text content.
-detect:
-  component: Avatar
-  from: "@patternfly/react-core"
-  when:
-    missingAlt: true
-fix:
-  addProp:
-    alt: "{{inferPurpose}}"

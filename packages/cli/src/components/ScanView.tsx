@@ -1,7 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Box, Text, useApp } from "ink";
 import Spinner from "ink-spinner";
-import { scan, type ScanResult } from "@capya11y/core";
+import {
+  scan,
+  type ChecksConfig,
+  type IgnoreRuleConfig,
+  type ScanResult,
+} from "@capya11y/core";
 import { BrandHeader } from "./BrandHeader.js";
 import { FindingRow } from "./FindingRow.js";
 import { Summary } from "./Summary.js";
@@ -11,12 +16,18 @@ export function ScanView({
   roots,
   packs,
   ignore,
+  checks,
+  ignoreRules,
+  patternflyVersion,
   theme,
   onDone,
 }: {
   roots: string[];
   packs?: string[];
   ignore?: string[];
+  checks?: ChecksConfig;
+  ignoreRules?: IgnoreRuleConfig[];
+  patternflyVersion?: "v5" | "v6";
   theme: Theme;
   onDone?: (result: ScanResult) => void;
 }) {
@@ -28,7 +39,14 @@ export function ScanView({
     let cancelled = false;
     (async () => {
       try {
-        const r = await scan({ roots, packs, ignore });
+        const r = await scan({
+          roots,
+          packs,
+          ignore,
+          checks,
+          ignoreRules,
+          patternflyVersion,
+        });
         if (!cancelled) {
           setResult(r);
           onDone?.(r);

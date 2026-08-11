@@ -3,21 +3,14 @@ pack: patternfly-v6
 severity: error
 wcag: ["4.1.3"]
 autofix: safe
-message: >
-  Toast AlertGroup should set isLiveRegion so status messages are
-  announced to assistive technologies.
+template: toast-live-region
+params:
+  component: AlertGroup
+  from: "@patternfly/react-core"
 helpUrl: https://www.patternfly.org/components/alert/accessibility
 education: >
   Toast alerts are dynamic status updates. Without a live region,
   screen readers may never announce them.
-detect:
-  component: AlertGroup
-  from: "@patternfly/react-core"
-  when:
-    toastWithoutLiveRegion: true
-fix:
-  addProp:
-    isLiveRegion: "true"
 example:
   before: |
     <AlertGroup isToast>{alerts}</AlertGroup>

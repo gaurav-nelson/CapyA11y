@@ -13,6 +13,7 @@ import {
   scan,
   suggestLabels,
   writeDefaultConfig,
+  type ChecksConfig,
   type ReportFormat,
   type ScanResult,
 } from "@capya11y/core";
@@ -21,19 +22,28 @@ import { FixView } from "./components/FixView.js";
 import { ExplainView } from "./components/ExplainView.js";
 import { InitView } from "./components/InitView.js";
 import { resolveTheme, type ThemeMode } from "./theme/tokens.js";
-import { HELP, parseArgs } from "./parse-args.js";
+import { HELP, parseArgs, resolveEmitters, type CliFlags } from "./parse-args.js";
+import { formatPacksTable, formatRulesTable, listPacks, listRules } from "./commands/catalog.js";
+import { runPr } from "./commands/pr.js";
 
 function resolvePacks(
-  flags: ReturnType<typeof parseArgs>["flags"],
+  flags: CliFlags,
   configPacks: string[],
   patternflyVersion: "v5" | "v6",
 ): string[] {
   if (flags.pack.length > 0) return flags.pack;
   const pfPack = resolvePackIdForVersion(patternflyVersion);
-  const packs = configPacks.map((p) =>
-    p.startsWith("patternfly") ? pfPack : p,
-  );
+  const packs = configPacks.map((p) => (p.startsWith("patternfly") ? pfPack : p));
   return [...new Set(packs)];
+}
+
+function mergeChecks(configChecks: ChecksConfig, flags: CliFlags): ChecksConfig {
+  return {
+    doNotAutoAddDefaults:
+      flags.doNotAutoAddDefaults || configChecks.doNotAutoAddDefaults,
+    include: flags.include.length > 0 ? flags.include : configChecks.include,
+    exclude: [...new Set([...configChecks.exclude, ...flags.exclude])],
+  };
 }
 
 function shouldFail(result: ScanResult, failOn: "error" | "warning" | "never"): boolean {
@@ -49,15 +59,16 @@ function emit(text: string, out?: string) {
     writeFileSync(out, text, "utf8");
     process.stderr.write(`Wrote ${out}\n`);
   } else {
-    process.stdout.write(text);
+    process.stdout.write(text.endsWith("\n") ? text : text + "\n");
   }
 }
 
-function reportFormat(flags: ReturnType<typeof parseArgs>["flags"]): ReportFormat {
-  if (flags.sarif) return "sarif";
-  if (flags.evidence) return "evidence";
-  if (flags.json) return "json";
-  return "plain";
+function emitScanFormats(result: ScanResult, flags: CliFlags) {
+  const emitters = resolveEmitters(flags);
+  for (const e of emitters) {
+    const format = e.format as ReportFormat;
+    emit(formatReport(result, format), e.out);
+  }
 }
 
 async function main() {
@@ -73,12 +84,20 @@ async function main() {
   const patternflyVersion = flags.patternflyVersion ?? config.patternflyVersion ?? "v6";
   const packs = resolvePacks(flags, config.packs, patternflyVersion);
   const failOn = flags.failOn ?? config.failOn ?? "error";
-  const usePlain =
-    flags.plain ||
+  const checks = mergeChecks(config.checks, flags);
+  const ignoreRules = config.ignoreRules;
+  const hasFormatFlags =
+    flags.formats.length > 0 ||
     flags.json ||
     flags.sarif ||
     flags.evidence ||
+    flags.plain;
+  const usePlain =
+    hasFormatFlags ||
     flags.suggest ||
+    command === "rules" ||
+    command === "packs" ||
+    command === "pr" ||
     !process.stdout.isTTY ||
     process.env.NO_COLOR !== undefined;
   const theme = resolveTheme(themeMode, { plain: usePlain });
@@ -95,6 +114,7 @@ async function main() {
         "  pnpm capya11y fix packages/fixtures/demo/BrokenPage.tsx --safe --dry-run",
         "  pnpm capya11y explain pf-alert-toast-live-region",
         "  pnpm capya11y report packages/fixtures/demo --evidence --out evidence.md",
+        "  pnpm capya11y rules list --pack patternfly-v6",
       ].join("\n");
       if (flags.json) {
         emit(JSON.stringify({ path, demo: tip }, null, 2) + "\n", flags.out);
@@ -132,11 +152,98 @@ async function main() {
     return;
   }
 
+  if (command === "rules") {
+    const sub = rest[0] ?? "list";
+    if (sub !== "list") {
+      console.error("Usage: capya11y rules list [--pack <id>] [--json]");
+      process.exitCode = 1;
+      return;
+    }
+    const rules = listRules({ packs, checks, patternflyVersion });
+    if (flags.json) {
+      emit(
+        JSON.stringify(
+          rules.map((r) => ({
+            id: r.id,
+            pack: r.pack,
+            severity: r.severity,
+            autofix: r.autofix,
+            wcag: r.wcag,
+            message: r.message,
+            remediation: r.remediation,
+          })),
+          null,
+          2,
+        ) + "\n",
+        flags.out,
+      );
+    } else {
+      emit(formatRulesTable(rules) + "\n", flags.out);
+    }
+    return;
+  }
+
+  if (command === "packs") {
+    const sub = rest[0] ?? "list";
+    if (sub !== "list") {
+      console.error("Usage: capya11y packs list [--json]");
+      process.exitCode = 1;
+      return;
+    }
+    const packsList = listPacks();
+    if (flags.json) {
+      emit(JSON.stringify(packsList, null, 2) + "\n", flags.out);
+    } else {
+      emit(formatPacksTable(packsList) + "\n", flags.out);
+    }
+    return;
+  }
+
   const target = rest[0] ?? ".";
   const ignore = [...new Set([...DEFAULT_IGNORE, ...config.ignore])];
+  const scanOpts = {
+    roots: [target],
+    packs,
+    ignore,
+    checks,
+    ignoreRules,
+    patternflyVersion,
+  };
+
+  if (command === "pr") {
+    try {
+      const result = await runPr({
+        ...scanOpts,
+        dryRun: flags.dryRun,
+        allowDirty: flags.allowDirty,
+        safe: flags.safe,
+      });
+      if (flags.json) {
+        emit(
+          JSON.stringify(
+            {
+              title: result.title,
+              body: result.body,
+              branch: result.branch,
+              created: result.created,
+            },
+            null,
+            2,
+          ) + "\n",
+          flags.out,
+        );
+      } else {
+        emit(result.message + "\n", flags.out);
+      }
+    } catch (err) {
+      console.error(err instanceof Error ? err.message : err);
+      process.exitCode = 1;
+    }
+    return;
+  }
 
   if (command === "suggest") {
-    const scanned = await scan({ roots: [target], packs, ignore });
+    const scanned = await scan(scanOpts);
     const suggestions = suggestLabels(scanned.findings);
     if (flags.json) {
       emit(JSON.stringify(suggestions, null, 2) + "\n", flags.out);
@@ -149,13 +256,10 @@ async function main() {
         lines.push("No suggest-tier findings to propose labels for.");
       }
       for (const s of suggestions) {
-        lines.push(
-          `${s.finding.file}:${s.finding.range.startLine} ${s.finding.ruleId}`,
-        );
-        lines.push(
-          `  → ${s.suggestedProp}="${s.suggestedValue}" (${s.confidence})`,
-        );
+        lines.push(`${s.finding.file}:${s.finding.range.startLine} ${s.finding.ruleId}`);
+        lines.push(`  → ${s.suggestedProp}="${s.suggestedValue}" (${s.confidence})`);
         lines.push(`  ${s.rationale}`);
+        if (s.finding.remediation) lines.push(`  Remediation: ${s.finding.remediation}`);
         lines.push("");
       }
       emit(lines.join("\n"), flags.out);
@@ -164,7 +268,7 @@ async function main() {
   }
 
   if (command === "report") {
-    const scanned = await scan({ roots: [target], packs, ignore });
+    const scanned = await scan(scanOpts);
     const text = flags.json
       ? JSON.stringify(scanned, null, 2) + "\n"
       : formatEvidenceReport(scanned, undefined, {
@@ -177,19 +281,26 @@ async function main() {
 
   if (command === "scan") {
     if (usePlain) {
-      const result = await scan({ roots: [target], packs, ignore });
-      let format = reportFormat(flags);
-      if (flags.suggest && !flags.sarif && !flags.evidence && !flags.json) {
+      const result = await scan(scanOpts);
+      if (flags.suggest && !flags.sarif && !flags.evidence && !flags.json && flags.formats.length === 0) {
         const suggestions = suggestLabels(result.findings);
         emit(JSON.stringify({ scan: result, suggestions }, null, 2) + "\n", flags.out);
       } else {
-        emit(formatReport(result, format), flags.out);
+        emitScanFormats(result, flags);
       }
       if (shouldFail(result, failOn)) process.exitCode = 1;
       return;
     }
     const { waitUntilExit } = render(
-      <ScanView roots={[target]} packs={packs} ignore={ignore} theme={theme} />,
+      <ScanView
+        roots={[target]}
+        packs={packs}
+        ignore={ignore}
+        checks={checks}
+        ignoreRules={ignoreRules}
+        patternflyVersion={patternflyVersion}
+        theme={theme}
+      />,
     );
     await waitUntilExit();
     return;
@@ -198,14 +309,16 @@ async function main() {
   if (command === "fix") {
     const mode = flags.safe ? "safe" : "all";
     if (usePlain) {
-      const scanned = await scan({ roots: [target], packs, ignore });
+      const scanned = await scan(scanOpts);
       const result = await applyFixes({
         findings: scanned.findings,
         mode,
         dryRun: flags.dryRun,
       });
-      if (flags.evidence) {
-        emit(formatEvidenceReport(scanned, result, { product: target }), flags.out);
+      if (flags.evidence || flags.formats.some((f) => f.format === "evidence")) {
+        const evidenceOut =
+          flags.formats.find((f) => f.format === "evidence")?.out ?? flags.out;
+        emit(formatEvidenceReport(scanned, result, { product: target }), evidenceOut);
       } else {
         emit(formatReport(result, flags.json ? "json" : "plain"), flags.out);
       }
@@ -216,6 +329,9 @@ async function main() {
         roots={[target]}
         packs={packs}
         ignore={ignore}
+        checks={checks}
+        ignoreRules={ignoreRules}
+        patternflyVersion={patternflyVersion}
         theme={theme}
         dryRun={flags.dryRun}
         mode={mode}

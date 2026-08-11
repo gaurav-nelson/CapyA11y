@@ -19,6 +19,7 @@ export function explainRule(ruleId: string, packDirs?: string[]): ExplainResult 
     rule.wcag.length ? `WCAG: ${rule.wcag.join(", ")}` : null,
     "",
     rule.message.trim(),
+    rule.remediation ? `\nRemediation:\n${rule.remediation.trim()}` : null,
     rule.education ? `\nWhy it matters:\n${rule.education.trim()}` : null,
     rule.helpUrl ? `\nLearn more: ${rule.helpUrl}` : null,
     rule.example?.before ? `\nBefore:\n${rule.example.before}` : null,
