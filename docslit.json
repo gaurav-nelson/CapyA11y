@@ -3,16 +3,25 @@
   "description": "Automated accessibility remediation for React/TSX — WCAG Core + PatternFly.",
   "sidebar": [
     {
-      "group": "Start here",
-      "pages": ["introduction", "demo-script"]
+      "group": "Decide & try",
+      "pages": ["introduction", "quick-start"]
     },
     {
-      "group": "Guides",
-      "pages": ["architecture", "rule-authoring", "ci-and-evidence", "pre-commit"]
+      "group": "Do the work",
+      "pages": [
+        "fix-accessibility",
+        "ship-in-ci",
+        "runtime-scanning",
+        "author-a-rule"
+      ]
     },
     {
-      "group": "Reference",
-      "pages": ["tui-theme"]
+      "group": "Understand",
+      "pages": ["how-it-works"]
+    },
+    {
+      "group": "Look up & unblock",
+      "pages": ["cli-reference", "troubleshooting"]
     }
   ]
 }

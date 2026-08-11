@@ -1,40 +1,49 @@
 ---
-title: Introduction
-tag: Start here
-readtime: 2 min read
+title: Is CapyA11y right for us?
+tag: Decide
+readtime: 3 min read
 ---
 
-# CapyA11y (Capy-Ally)
+# Is CapyA11y right for us?
 
-Automated accessibility **remediation** for React/TSX — WCAG Core + PatternFly v6 rule packs, an accessible Ink TUI, Cursor skills, CI SARIF, and VPAT-oriented evidence reports.
+**Outcome:** Decide whether CapyA11y fits your React/PatternFly accessibility workflow before you install anything.
 
-> PatternFly-native fixes developers trust. YAML rules a11y leads own. Just-in-time WCAG education — in the IDE and in CI.
+## Who it is for
 
-<wc-callout type="info" title="Static + optional runtime, not a full ACR">
-  Default scans use AST rules. Pass <code>--runtime</code> to also mount components with Playwright + axe-core + tabbable. This still does not replace Guidepup/VoiceOver/NVDA simulation or a complete Accessibility Conformance Report.
+| You are… | You need to… |
+|----------|--------------|
+| App developer | Find and fix a11y issues in TSX without leaving the terminal or IDE |
+| A11y / design-system lead | Own WCAG + PatternFly rules as YAML, without shipping ESLint plugins |
+| Platform / CI engineer | Gate PRs with SARIF and produce engineering evidence for VPAT/ACR drafts |
+
+## What makes it different
+
+Most tools **report**. CapyA11y is built to **remediate**:
+
+1. **PatternFly-aware** — prefers PF props (`isLiveRegion`, `fieldId`, `aria-label` on icon-only Button) over generic JSX guesses.
+2. **Safe vs suggest vs manual** — CI can auto-apply structural fixes; copy still needs a human.
+3. **YAML packs** — a11y leads change rules without a TypeScript plugin PR.
+4. **Evidence** — WCAG-mapped markdown for Section 508 / ACR *engineering* narratives (not a conformance claim).
+5. **Optional runtime** — axe-core contrast, tabbable focus, live `--url`, and Guidepup VoiceOver/NVDA when you need more than AST.
+
+<wc-callout type="info" title="Not a full ACR">
+  Static AST is the default. Runtime and AT modes deepen coverage. None of them replace manual assistive-technology testing or a signed Accessibility Conformance Report.
 </wc-callout>
 
-## Quick start
+## When to choose something else
 
-```bash
-pnpm install
-pnpm build
-pnpm capya11y init --plain
-pnpm capya11y scan packages/fixtures/demo/BrokenPage.tsx
-pnpm capya11y fix packages/fixtures/demo/BrokenPage.tsx --safe --dry-run
-pnpm capya11y explain pf-alert-toast-live-region --plain
-```
+- You only need one-off axe on a deployed URL and never touch source → Playwright + axe may be enough.
+- Your stack is not React/TSX → CapyA11y’s matchers and packs will not apply.
+- You need Linux CI to drive real NVDA/VoiceOver → use `--url`/`--runtime` for axe/tabbable; real `--at` needs macOS or Windows.
 
-## What you get
+## How you’ll know it fits
 
-1. **Design-system intelligence** — PatternFly props (`isLiveRegion`, `fieldId`, `navAriaLabel`), not only generic JSX.
-2. **Remediation tiers** — `safe` / `suggest` / `manual` so CI can trust autofix.
-3. **YAML packs** authored by a11y leads without ESLint plugin PRs.
-4. **Evidence export** — WCAG-mapped reports for Section 508 / VPAT engineering narratives.
-5. **Hybrid agent** — deterministic core + Cursor skills for approved label copy.
+You can answer “yes” to at least two:
 
-## Next steps
+- We ship PatternFly (or want PF-shaped remediations).
+- We want autofix in CI for *structural* issues, with human review for labels.
+- We need SARIF or WCAG-grouped evidence for compliance conversations.
 
-- Walk through the [demo script](/demo-script)
-- Read the [architecture](/architecture)
-- Author or extend rules in [rule authoring](/rule-authoring)
+## Next step
+
+Try it in under a minute: [Get your first finding and fix](/quick-start).

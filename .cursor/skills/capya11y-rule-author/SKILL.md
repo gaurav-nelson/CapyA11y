@@ -10,7 +10,7 @@ description: >-
 
 ## Workflow
 
-1. Read [docs/rule-authoring.md](../../docs/rule-authoring.md) and an existing similar rule under `packages/rules-wcag/rules/` or `packages/rules-patternfly/rules/`.
+1. Read [docs/author-a-rule.md](../../docs/author-a-rule.md) and an existing similar rule under `packages/rules-wcag/rules/` or `packages/rules-patternfly/rules/`.
 2. Gather component guidance from PatternFly docs (MCP `searchPatternFlyDocs` / `usePatternFlyDocs` when available) or WCAG Understanding pages.
 3. Draft a YAML rule with:
    - Stable `id` (`wcag-…` or `pf-…`)

@@ -49,6 +49,8 @@ pnpm capya11y pr packages/fixtures/demo --safe --dry-run
 | `--patternfly-version v6` | Pack version selection |
 | `--plain` / `NO_COLOR=1` | Accessible non-TUI output |
 | `--runtime` | Mount TSX (Playwright CT) + axe-core + tabbable; merge with static |
+| `--url <http...>` | Live app scan (axe + tabbable); path optional |
+| `--at [auto\|voiceover\|nvda]` | Guidepup VoiceOver (macOS) / NVDA (Windows) |
 
 ## Moat (why not “just eslint / axe”)
 
@@ -61,13 +63,14 @@ pnpm capya11y pr packages/fixtures/demo --safe --dry-run
 ## Packages
 
 - `@capya11y/core` — scan, match, fix, SARIF, evidence, label suggest
-- `@capya11y/runtime` — Playwright CT mount, axe-core, tabbable focus checks
+- `@capya11y/runtime` — Playwright CT / live URL, axe-core, tabbable, Guidepup AT
 - `@capya11y/cli` — Ink TUI CLI
 - `@capya11y/rules-wcag` — WCAG 2.2 AA starter pack
 - `@capya11y/rules-patternfly` — PatternFly v6 pack (+ Wizard, Drawer, DualList, …)
 - `@capya11y/fixtures` — demo + test fixtures
 
-Runtime browsers (once): `pnpm exec playwright install chromium`
+Runtime setup (once): `pnpm exec playwright install chromium`  
+AT setup (macOS/Windows): `npx @guidepup/setup`
 
 ## Docs site (DocsLit)
 
@@ -79,10 +82,17 @@ pnpm docs:build      # static site → docs-dist/
 
 Source pages live under [`docs/`](docs/); site config is [`docslit.json`](docslit.json).
 
-- [Introduction](docs/introduction.md)
-- [Architecture](docs/architecture.md)
-- [Rule authoring](docs/rule-authoring.md) — templates, include/exclude, ignore-with-reason
-- [Pre-commit](docs/pre-commit.md)
-- [TUI theme](docs/tui-theme.md)
-- [Demo script](docs/demo-script.md)
-- [CI & evidence](docs/ci-and-evidence.md) — multi-format scan, ACR snapshot, local Fix-PR
+**Decide & try**
+- [Is CapyA11y right for us?](docs/introduction.md)
+- [Get your first finding and fix](docs/quick-start.md)
+
+**Do the work**
+- [Find and fix accessibility issues](docs/fix-accessibility.md)
+- [Ship accessibility gates in CI](docs/ship-in-ci.md) — SARIF, evidence, pre-commit
+- [Catch issues static analysis misses](docs/runtime-scanning.md) — `--runtime`, `--url`, `--at`
+- [Add or change an accessibility rule](docs/author-a-rule.md)
+
+**Understand / look up**
+- [How CapyA11y decides what to flag](docs/how-it-works.md)
+- [CLI reference](docs/cli-reference.md)
+- [Troubleshoot scans and fixes](docs/troubleshooting.md)

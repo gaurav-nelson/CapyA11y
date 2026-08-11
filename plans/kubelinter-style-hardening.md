@@ -39,7 +39,7 @@ checks:
 
 - Apply filter in `packages/core/src/load-rules.ts` / `packages/core/src/scan.ts` after packs load: `exclude` wins over `include` (kube-linter semantics).
 - CLI: `--include`, `--exclude`, `--do-not-auto-add-defaults`.
-- Update `writeDefaultConfig` in `packages/core/src/config.ts` + [rule-authoring.md](../docs/rule-authoring.md).
+- Update `writeDefaultConfig` in `packages/core/src/config.ts` + [author-a-rule.md](../docs/author-a-rule.md).
 
 ## 2. Ignore-with-reason (audit trail)
 
@@ -86,7 +86,7 @@ params:
 
 - Expand `RuleSchema` with optional `template` + `params`; resolve to concrete `Rule` at load time.
 - Migrate 3–5 existing PF rules to templates as proof; leave others as-is for compatibility.
-- Document in [rule-authoring.md](../docs/rule-authoring.md) with a templates catalog.
+- Document in [author-a-rule.md](../docs/author-a-rule.md) with a templates catalog.
 
 ## 4. First-class `remediation` on findings
 
@@ -142,7 +142,7 @@ Implement as `packages/cli/src/commands/pr.ts` using `child_process` + existing 
 
 ## 8. Pre-commit / local shift-left docs
 
-- Add [docs/pre-commit.md](../docs/pre-commit.md) with a sample `.pre-commit-config.yaml` / husky snippet: `capya11y scan --fail-on error --plain`.
+- Document pre-commit in [ship-in-ci.md](../docs/ship-in-ci.md) with a sample `.pre-commit-config.yaml` / husky snippet: `capya11y scan --fail-on error --plain`.
 - Link from README; no Action work.
 
 ## 9. VPAT / ACR narrative polish (docs + report fields)
@@ -150,7 +150,7 @@ Implement as `packages/cli/src/commands/pr.ts` using `child_process` + existing 
 Light enhancement to `packages/core/src/evidence.ts`:
 
 - Optional “ACR-oriented” section: group by WCAG with placeholder Support columns (`Supports` / `Partially Supports` / `Does Not Support` / `Not Evaluated`) derived from finding counts, with a clear static-analysis disclaimer.
-- Sample excerpt in [ci-and-evidence.md](../docs/ci-and-evidence.md) for hackathon judges.
+- Sample excerpt in [ship-in-ci.md](../docs/ship-in-ci.md) for hackathon judges.
 
 ## Implementation order
 
