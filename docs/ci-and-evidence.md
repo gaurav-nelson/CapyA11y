@@ -30,6 +30,15 @@ pnpm capya11y scan ./src \
 
 One AST scan; multiple emitters.
 
+### Runtime (CT + axe + tabbable)
+
+```bash
+pnpm exec playwright install chromium
+pnpm capya11y scan ./src --runtime --format evidence --out evidence.md --fail-on error
+```
+
+Evidence includes a **Runtime checks** section. Findings are tagged `[runtime:axe]` / `[runtime:tabbable]` in plain output. Requires Chromium for Playwright.
+
 ## Pre-commit
 
 See [Pre-commit](/pre-commit) for husky / pre-commit snippets (`capya11y scan --fail-on error --plain`).

@@ -48,6 +48,7 @@ pnpm capya11y pr packages/fixtures/demo --safe --dry-run
 | `--pack <name>` | `wcag-core`, `patternfly-v6`, `pf`, … |
 | `--patternfly-version v6` | Pack version selection |
 | `--plain` / `NO_COLOR=1` | Accessible non-TUI output |
+| `--runtime` | Mount TSX (Playwright CT) + axe-core + tabbable; merge with static |
 
 ## Moat (why not “just eslint / axe”)
 
@@ -60,10 +61,13 @@ pnpm capya11y pr packages/fixtures/demo --safe --dry-run
 ## Packages
 
 - `@capya11y/core` — scan, match, fix, SARIF, evidence, label suggest
+- `@capya11y/runtime` — Playwright CT mount, axe-core, tabbable focus checks
 - `@capya11y/cli` — Ink TUI CLI
 - `@capya11y/rules-wcag` — WCAG 2.2 AA starter pack
 - `@capya11y/rules-patternfly` — PatternFly v6 pack (+ Wizard, Drawer, DualList, …)
 - `@capya11y/fixtures` — demo + test fixtures
+
+Runtime browsers (once): `pnpm exec playwright install chromium`
 
 ## Docs site (DocsLit)
 

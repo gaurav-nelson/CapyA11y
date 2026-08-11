@@ -201,6 +201,7 @@ async function main() {
 
   const target = rest[0] ?? ".";
   const ignore = [...new Set([...DEFAULT_IGNORE, ...config.ignore])];
+  const runtime = flags.runtime || config.runtime;
   const scanOpts = {
     roots: [target],
     packs,
@@ -208,6 +209,7 @@ async function main() {
     checks,
     ignoreRules,
     patternflyVersion,
+    runtime,
   };
 
   if (command === "pr") {
@@ -299,6 +301,7 @@ async function main() {
         checks={checks}
         ignoreRules={ignoreRules}
         patternflyVersion={patternflyVersion}
+        runtime={runtime}
         theme={theme}
       />,
     );

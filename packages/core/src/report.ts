@@ -30,8 +30,10 @@ export function formatFindingsPlain(findings: Finding[]): string {
     const wcag = f.wcag.length ? ` [${f.wcag.join(", ")}]` : "";
     const fix =
       f.autofix === "safe" ? " [autofix:safe]" : f.autofix === "suggest" ? " [autofix:suggest]" : "";
+    const origin =
+      f.origin === "runtime" ? ` [runtime:${f.engine ?? "runtime"}]` : "";
     lines.push(
-      `  ${severityLabel(f.severity)} ${f.range.startLine}:${f.range.startColumn}  ${f.ruleId}${wcag}${fix}`,
+      `  ${severityLabel(f.severity)} ${f.range.startLine}:${f.range.startColumn}  ${f.ruleId}${wcag}${fix}${origin}`,
     );
     lines.push(`      ${f.message}`);
     if (f.remediation) lines.push(`      Remediation: ${f.remediation}`);

@@ -75,6 +75,49 @@ function resolveFiles(roots: string[], ignore: string[]): string[] {
   return [...files];
 }
 
+async function runRuntimeIfEnabled(
+  options: ScanOptions,
+): Promise<{ findings: Finding[]; errors: Array<{ file: string; message: string }> }> {
+  if (!options.runtime) return { findings: [], errors: [] };
+  try {
+    const mod = (await import("@capya11y/runtime")) as {
+      runRuntimeScan: (opts: {
+        roots: string[];
+        ignore?: string[];
+        cwd?: string;
+      }) => Promise<{
+        findings: Finding[];
+        errors: Array<{ file: string; message: string }>;
+      }>;
+    };
+    const result = await mod.runRuntimeScan({
+      roots: options.roots,
+      ignore: options.ignore,
+      cwd: process.cwd(),
+    });
+    return {
+      findings: result.findings.map((f) => ({
+        ...f,
+        origin: f.origin ?? "runtime",
+      })),
+      errors: result.errors,
+    };
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
+    return {
+      findings: [],
+      errors: [
+        {
+          file: "(runtime)",
+          message: msg.includes("Cannot find package")
+            ? "Runtime scan requires @capya11y/runtime. Build the workspace and run: pnpm exec playwright install chromium"
+            : msg,
+        },
+      ],
+    };
+  }
+}
+
 export async function scan(options: ScanOptions): Promise<ScanResult> {
   const packDirs = options.packDirs?.length ? options.packDirs : defaultPackDirs();
   const rules = loadPacks(packDirs, options.packs, {
@@ -131,10 +174,15 @@ export async function scan(options: ScanOptions): Promise<ScanResult> {
           elementName: getElementName(el),
           fix: rule.autofix === "manual" ? undefined : fix,
           confidence: rule.autofix === "safe" ? "high" : rule.autofix === "suggest" ? "medium" : "low",
+          origin: "static",
+          engine: "ast",
         });
       }
     }
   }
+
+  const runtime = await runRuntimeIfEnabled(options);
+  findings.push(...runtime.findings);
 
   findings.sort((a, b) => {
     if (a.file !== b.file) return a.file.localeCompare(b.file);
@@ -150,7 +198,13 @@ export async function scan(options: ScanOptions): Promise<ScanResult> {
     findings: active,
     filesScanned: files.length,
     rulesLoaded: rules.length,
-    packs: [...new Set(rules.map((r) => r.pack))],
+    packs: [
+      ...new Set([
+        ...rules.map((r) => r.pack),
+        ...(options.runtime ? (["runtime"] as const) : []),
+      ]),
+    ],
     exceptions,
+    runtimeErrors: runtime.errors.length ? runtime.errors : undefined,
   };
 }

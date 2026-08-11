@@ -1,0 +1,41 @@
+{
+  "name": "@capya11y/runtime",
+  "version": "0.1.0",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "vitest run",
+    "postinstall": "playwright install chromium || true"
+  },
+  "dependencies": {
+    "@axe-core/playwright": "^4.10.1",
+    "@playwright/experimental-ct-react": "^1.51.0",
+    "axe-core": "^4.10.3",
+    "esbuild": "^0.25.0",
+    "glob": "^11.0.1",
+    "playwright": "^1.51.0",
+    "tabbable": "^6.2.0",
+    "ts-morph": "^25.0.1"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0 || ^19.0.0",
+    "react-dom": "^18.0.0 || ^19.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.10",
+    "@types/react": "^18.3.18",
+    "@types/react-dom": "^18.3.5",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "typescript": "^5.8.2",
+    "vitest": "^3.0.8"
+  }
+}

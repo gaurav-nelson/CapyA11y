@@ -47,6 +47,7 @@ export function formatEvidenceReport(
     `| Safe autofixable | ${safeFixable.length} |`,
     `| Needs human copy (suggest) | ${suggest.length} |`,
     `| Accepted exceptions | ${exceptions.length} |`,
+    `| Runtime findings | ${scan.findings.filter((f) => f.origin === "runtime").length} |`,
   ];
 
   if (apply) {
@@ -135,12 +136,42 @@ export function formatEvidenceReport(
   }
   lines.push("");
 
+  const runtimeFindings = scan.findings.filter((f) => f.origin === "runtime");
+  lines.push("## Runtime checks", "");
+  if (runtimeFindings.length === 0) {
+    lines.push(
+      scan.runtimeErrors?.length
+        ? "Runtime scan attempted but produced no findings (see errors below)."
+        : "No runtime findings in this report. Pass `--runtime` to mount components with Playwright CT + axe-core + tabbable.",
+    );
+  } else {
+    lines.push("| File | Engine | Rule | Remediation |");
+    lines.push("| --- | --- | --- | --- |");
+    for (const f of runtimeFindings.slice(0, 80)) {
+      lines.push(
+        `| \`${f.file}:${f.range.startLine}\` | ${f.engine ?? "runtime"} | \`${f.ruleId}\` | ${f.remediation} |`,
+      );
+    }
+    if (runtimeFindings.length > 80) {
+      lines.push(`| … | … | … | and ${runtimeFindings.length - 80} more |`);
+    }
+  }
+  lines.push("");
+  if (scan.runtimeErrors?.length) {
+    lines.push("### Runtime errors");
+    lines.push("");
+    for (const e of scan.runtimeErrors) {
+      lines.push(`- \`${e.file}\`: ${e.message}`);
+    }
+    lines.push("");
+  }
+
   lines.push("## Notes for VPAT / Section 508 engineering", "");
   lines.push(
-    "- This report reflects **static AST analysis** of React/TSX source (WCAG Core + PatternFly packs).",
+    "- This report reflects **static AST analysis** (WCAG Core + PatternFly packs) and, when `--runtime` is enabled, **Playwright component isolation + axe-core + tabbable**.",
   );
   lines.push(
-    "- It does **not** replace runtime axe testing, manual AT verification, or full ACT rule coverage.",
+    "- It does **not** replace Guidepup/VoiceOver/NVDA simulation, full manual AT verification, or a complete ACR claim.",
   );
   lines.push(
     "- Accepted exceptions require a documented reason (config `ignoreRules` or `capya11y-ignore` comments).",

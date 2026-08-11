@@ -10,11 +10,28 @@ CapyA11y (Capy-Ally) is a hybrid accessibility remediation agent:
 
 1. **Declarative YAML rule packs** (WCAG Core + PatternFly v6)
 2. **Shared TypeScript core** (`@capya11y/core`) — AST scan, match, fix, report
-3. **Ink React TUI CLI** (`@capya11y/cli`) — accessible interactive UX
-4. **Cursor skills** — agent-driven fix / review / rule authoring
+3. **Runtime engine** (`@capya11y/runtime`) — Playwright CT-style mount + axe-core + tabbable
+4. **Ink React TUI CLI** (`@capya11y/cli`) — accessible interactive UX
+5. **Cursor skills** — agent-driven fix / review / rule authoring
 
 ```
-Developer → Ink TUI / Cursor skill → core.scan / core.applyFixes → YAML packs
+Developer → Ink TUI / Cursor skill → core.scan [--runtime] / core.applyFixes → YAML packs + runtime
+```
+
+## Runtime mode (`--runtime`)
+
+When enabled, CapyA11y mounts each TSX/JSX component in headless Chromium (component isolation, no full app server), then:
+
+| Open-source engine | What it covers |
+|--------------------|----------------|
+| axe-core / `@axe-core/playwright` | Computed color contrast, ARIA, WCAG 2.2 AA tags |
+| tabbable + Playwright keyboard | Focus order + visible focus indicators |
+
+CapyA11y injects `data-capya11y-source` on JSX nodes so runtime hits map back to source lines, then merges with static findings and PatternFly-aware remediation hints. Guidepup (VO/NVDA) is deferred.
+
+```bash
+pnpm exec playwright install chromium   # once
+pnpm capya11y scan packages/fixtures/demo/RuntimeBroken.tsx --runtime --plain
 ```
 
 ## Autofix tiers
@@ -29,6 +46,7 @@ Developer → Ink TUI / Cursor skill → core.scan / core.applyFixes → YAML pa
 
 - `wcag-core` — plain HTML/JSX mapped to [WCAG 2.2](https://www.w3.org/WAI/standards-guidelines/wcag/)
 - `patternfly-v6` — PatternFly React component APIs and a11y docs
+- `runtime` — findings from axe / tabbable when `--runtime` is set
 
 ## CI / agents
 

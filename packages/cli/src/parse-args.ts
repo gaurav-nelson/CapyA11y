@@ -24,6 +24,7 @@ export interface CliFlags {
   doNotAutoAddDefaults: boolean;
   formats: FormatEmitter[];
   allowDirty: boolean;
+  runtime: boolean;
 }
 
 export interface ParsedCli {
@@ -70,6 +71,7 @@ export function parseArgs(argv: string[]): ParsedCli {
     doNotAutoAddDefaults: false,
     formats: [],
     allowDirty: false,
+    runtime: false,
   };
   const positionals: string[] = [];
 
@@ -99,6 +101,8 @@ export function parseArgs(argv: string[]): ParsedCli {
       flags.suggest = true;
     } else if (arg === "--allow-dirty") {
       flags.allowDirty = true;
+    } else if (arg === "--runtime") {
+      flags.runtime = true;
     } else if (arg === "--do-not-auto-add-defaults") {
       flags.doNotAutoAddDefaults = true;
     } else if (arg === "--theme") {
@@ -199,12 +203,14 @@ export const HELP = `
     --out <file>             Write current --format output to file
     --theme <auto|high-contrast>
     --allow-dirty            Allow \`capya11y pr\` on a dirty git tree
+    --runtime                Also mount TSX via Playwright CT + axe + tabbable
 
   Examples
     $ capya11y scan ./src
     $ capya11y fix ./src --safe --dry-run
     $ capya11y scan . --format sarif --out capya11y.sarif --format evidence --out evidence.md
     $ capya11y scan . --exclude pf-is-aria-disabled --plain
+    $ capya11y scan packages/fixtures/demo/RuntimeBroken.tsx --runtime --plain
     $ capya11y rules list --pack patternfly-v6
     $ capya11y pr packages/fixtures/demo --safe --dry-run
     $ capya11y explain pf-button-icon-only-name

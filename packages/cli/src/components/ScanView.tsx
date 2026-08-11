@@ -19,6 +19,7 @@ export function ScanView({
   checks,
   ignoreRules,
   patternflyVersion,
+  runtime,
   theme,
   onDone,
 }: {
@@ -28,6 +29,7 @@ export function ScanView({
   checks?: ChecksConfig;
   ignoreRules?: IgnoreRuleConfig[];
   patternflyVersion?: "v5" | "v6";
+  runtime?: boolean;
   theme: Theme;
   onDone?: (result: ScanResult) => void;
 }) {
@@ -46,6 +48,7 @@ export function ScanView({
           checks,
           ignoreRules,
           patternflyVersion,
+          runtime,
         });
         if (!cancelled) {
           setResult(r);

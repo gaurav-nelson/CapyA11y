@@ -28,6 +28,7 @@ export function writeDefaultConfig(cwd = process.cwd()): string {
       exclude: [],
     },
     ignoreRules: [],
+    runtime: false,
   });
   writeFileSync(path, stringifyYaml(config), "utf8");
   return path;

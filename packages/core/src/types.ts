@@ -31,6 +31,11 @@ export interface Finding {
   elementName: string;
   fix?: FixPatch;
   confidence: "high" | "medium" | "low";
+  /** How the finding was produced. Defaults to static AST when omitted. */
+  origin?: "static" | "runtime";
+  engine?: "ast" | "axe" | "tabbable";
+  /** CSS selector from runtime engines (debug). */
+  selector?: string;
 }
 
 export interface ApplyResult {
@@ -51,6 +56,8 @@ export interface ScanOptions {
   patternflyVersion?: "v5" | "v6";
   checks?: ChecksConfig;
   ignoreRules?: IgnoreRuleConfig[];
+  /** When true, also run Playwright CT + axe + tabbable runtime scan. */
+  runtime?: boolean;
 }
 
 export interface ScanResult {
@@ -59,4 +66,6 @@ export interface ScanResult {
   rulesLoaded: number;
   packs: string[];
   exceptions: AcceptedException[];
+  /** Runtime mount/engine errors (non-fatal). */
+  runtimeErrors?: Array<{ file: string; message: string }>;
 }

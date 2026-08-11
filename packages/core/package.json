@@ -16,6 +16,7 @@
     "test:watch": "vitest"
   },
   "dependencies": {
+    "@capya11y/runtime": "workspace:*",
     "glob": "^11.0.1",
     "ts-morph": "^25.0.1",
     "yaml": "^2.7.0",

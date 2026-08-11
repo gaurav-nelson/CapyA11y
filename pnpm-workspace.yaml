@@ -3,3 +3,5 @@ packages:
 
 allowBuilds:
   esbuild: true
+  playwright: true
+  "@playwright/experimental-ct-react": true

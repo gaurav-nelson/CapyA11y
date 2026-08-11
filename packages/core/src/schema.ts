@@ -118,6 +118,8 @@ export const ConfigSchema = z.object({
   failOn: z.enum(["error", "warning", "never"]).default("error"),
   checks: ChecksConfigSchema.default({}),
   ignoreRules: z.array(IgnoreRuleSchema).default([]),
+  /** Enable CT + axe + tabbable runtime scan (also `--runtime`). */
+  runtime: z.boolean().default(false),
 });
 
 export type CapyConfig = z.infer<typeof ConfigSchema>;

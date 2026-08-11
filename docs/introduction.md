@@ -10,8 +10,8 @@ Automated accessibility **remediation** for React/TSX — WCAG Core + PatternFly
 
 > PatternFly-native fixes developers trust. YAML rules a11y leads own. Just-in-time WCAG education — in the IDE and in CI.
 
-<wc-callout type="info" title="Static analysis, not a full ACR">
-  CapyA11y scans React/TSX with AST rules. It does not replace runtime axe testing, manual assistive-technology verification, or a complete Accessibility Conformance Report.
+<wc-callout type="info" title="Static + optional runtime, not a full ACR">
+  Default scans use AST rules. Pass <code>--runtime</code> to also mount components with Playwright + axe-core + tabbable. This still does not replace Guidepup/VoiceOver/NVDA simulation or a complete Accessibility Conformance Report.
 </wc-callout>
 
 ## Quick start

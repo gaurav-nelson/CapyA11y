@@ -5,8 +5,8 @@
   "description": "CapyA11y (Capy-Ally) — automated accessibility remediation agent",
   "type": "module",
   "scripts": {
-    "build": "pnpm --filter @capya11y/core run build && pnpm --filter @capya11y/cli run build",
-    "test": "pnpm --filter @capya11y/core run test && pnpm --filter @capya11y/cli run test",
+    "build": "pnpm --filter @capya11y/runtime run build && pnpm --filter @capya11y/core run build && pnpm --filter @capya11y/cli run build",
+    "test": "pnpm --filter @capya11y/runtime run test && pnpm --filter @capya11y/core run test && pnpm --filter @capya11y/cli run test",
     "capya11y": "node packages/cli/dist/bin.js",
     "dev": "node --import tsx packages/cli/src/bin.tsx",
     "docs:dev": "docslit dev",
