@@ -1,3 +1,9 @@
+---
+title: Pre-commit
+tag: Guide
+readtime: 2 min read
+---
+
 # Pre-commit gate
 
 Run CapyA11y before each commit so accessibility regressions never leave the workstation.

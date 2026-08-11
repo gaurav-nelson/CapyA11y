@@ -1,3 +1,9 @@
+---
+title: Demo script
+tag: Start here
+readtime: 5 min read
+---
+
 # Innovation Days demo script
 
 ## Setup
@@ -9,7 +15,7 @@ pnpm build
 
 ## 1. Show the problem
 
-Open [`packages/fixtures/demo/BrokenPage.tsx`](../packages/fixtures/demo/BrokenPage.tsx) — PatternFly + HTML accessibility gaps on purpose.
+Open `packages/fixtures/demo/BrokenPage.tsx` — PatternFly + HTML accessibility gaps on purpose.
 
 `FixedPage.example.tsx` is ignored by default (`**/*.example.tsx`) so repo-wide scans stay focused on real issues.
 

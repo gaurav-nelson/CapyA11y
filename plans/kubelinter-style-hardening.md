@@ -26,7 +26,7 @@ flowchart TB
 
 ## 1. Config governance (include / exclude / defaults)
 
-Extend [`packages/core/src/schema.ts`](../../packages/core/src/schema.ts) `ConfigSchema` (kube-linter `checks:` analogue):
+Extend `packages/core/src/schema.ts` `ConfigSchema` (kube-linter `checks:` analogue):
 
 ```yaml
 # .capya11y.yml
@@ -37,9 +37,9 @@ checks:
   exclude: [pf-is-aria-disabled]
 ```
 
-- Apply filter in [`load-rules.ts`](../../packages/core/src/load-rules.ts) / [`scan.ts`](../../packages/core/src/scan.ts) after packs load: `exclude` wins over `include` (kube-linter semantics).
+- Apply filter in `packages/core/src/load-rules.ts` / `packages/core/src/scan.ts` after packs load: `exclude` wins over `include` (kube-linter semantics).
 - CLI: `--include`, `--exclude`, `--do-not-auto-add-defaults`.
-- Update [`writeDefaultConfig`](../../packages/core/src/config.ts) + [rule-authoring.md](../rule-authoring.md).
+- Update `writeDefaultConfig` in `packages/core/src/config.ts` + [rule-authoring.md](../docs/rule-authoring.md).
 
 ## 2. Ignore-with-reason (audit trail)
 
@@ -63,7 +63,7 @@ ignoreRules:
 
 - Parser: nearest preceding comment within N lines of the JSX node; reason after `--` mandatory or finding stays.
 - Suppressed findings appear in evidence/report under “Accepted exceptions” (not silent drop) — VPAT-friendly.
-- Implement in [`match.ts`](../../packages/core/src/match.ts) / new `suppressions.ts`; wire into scan pipeline.
+- Implement in `packages/core/src/match.ts` / new `suppressions.ts`; wire into scan pipeline.
 
 ## 3. Templates + parameterized checks
 
@@ -86,7 +86,7 @@ params:
 
 - Expand `RuleSchema` with optional `template` + `params`; resolve to concrete `Rule` at load time.
 - Migrate 3–5 existing PF rules to templates as proof; leave others as-is for compatibility.
-- Document in [rule-authoring.md](../rule-authoring.md) with a templates catalog.
+- Document in [rule-authoring.md](../docs/rule-authoring.md) with a templates catalog.
 
 ## 4. First-class `remediation` on findings
 
@@ -107,8 +107,8 @@ capya11y scan ./src \
   --format evidence --out evidence.md
 ```
 
-- Extend [`parse-args.ts`](../../packages/cli/src/parse-args.ts): repeatable `--format` + paired `--out` (or `--format sarif:path`).
-- [`bin.tsx`](../../packages/cli/src/bin.tsx): run `scan` once; emit each format.
+- Extend `packages/cli/src/parse-args.ts`: repeatable `--format` + paired `--out` (or `--format sarif:path`).
+- `packages/cli/src/bin.tsx`: run `scan` once; emit each format.
 - Keep backward-compatible single `--json` / `--sarif` / `--evidence` / `--out`.
 
 ## 6. Catalog CLI: `rules list` / `packs list`
@@ -142,15 +142,15 @@ Implement as `packages/cli/src/commands/pr.ts` using `child_process` + existing 
 
 ## 8. Pre-commit / local shift-left docs
 
-- Add [docs/pre-commit.md](../pre-commit.md) with a sample `.pre-commit-config.yaml` / husky snippet: `capya11y scan --fail-on error --plain`.
+- Add [docs/pre-commit.md](../docs/pre-commit.md) with a sample `.pre-commit-config.yaml` / husky snippet: `capya11y scan --fail-on error --plain`.
 - Link from README; no Action work.
 
 ## 9. VPAT / ACR narrative polish (docs + report fields)
 
-Light enhancement to [`evidence.ts`](../../packages/core/src/evidence.ts):
+Light enhancement to `packages/core/src/evidence.ts`:
 
 - Optional “ACR-oriented” section: group by WCAG with placeholder Support columns (`Supports` / `Partially Supports` / `Does Not Support` / `Not Evaluated`) derived from finding counts, with a clear static-analysis disclaimer.
-- Sample excerpt in [ci-and-evidence.md](../ci-and-evidence.md) for hackathon judges.
+- Sample excerpt in [ci-and-evidence.md](../docs/ci-and-evidence.md) for hackathon judges.
 
 ## Implementation order
 

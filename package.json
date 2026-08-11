@@ -8,11 +8,17 @@
     "build": "pnpm --filter @capya11y/core run build && pnpm --filter @capya11y/cli run build",
     "test": "pnpm --filter @capya11y/core run test && pnpm --filter @capya11y/cli run test",
     "capya11y": "node packages/cli/dist/bin.js",
-    "dev": "node --import tsx packages/cli/src/bin.tsx"
+    "dev": "node --import tsx packages/cli/src/bin.tsx",
+    "docs:dev": "docslit dev",
+    "docs:build": "docslit build --out docs-dist",
+    "docs:validate": "docslit validate"
   },
   "engines": {
     "node": ">=20"
   },
   "packageManager": "pnpm@11.21.0",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "docslit": "^0.1.10"
+  }
 }

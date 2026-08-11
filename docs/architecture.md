@@ -1,3 +1,9 @@
+---
+title: Architecture
+tag: Guide
+readtime: 3 min read
+---
+
 # CapyA11y architecture
 
 CapyA11y (Capy-Ally) is a hybrid accessibility remediation agent:
@@ -28,7 +34,7 @@ Developer → Ink TUI / Cursor skill → core.scan / core.applyFixes → YAML pa
 
 Prefer `capya11y scan . --json` / `--sarif` and `capya11y fix . --safe --plain` so output is machine-readable and color-independent.
 
-See [ci-and-evidence.md](./ci-and-evidence.md) for GitHub Code Scanning, `--fail-on`, and VPAT evidence reports.
+See [CI and evidence](/ci-and-evidence) for GitHub Code Scanning, `--fail-on`, and VPAT evidence reports.
 
 ## Moat layers
 

@@ -1,8 +1,14 @@
+---
+title: CI and evidence
+tag: Guide
+readtime: 4 min read
+---
+
 # CI gate and evidence reports
 
 ## GitHub Actions
 
-See [`.github/workflows/capya11y.yml`](../.github/workflows/capya11y.yml).
+See `.github/workflows/capya11y.yml` in this repository.
 
 For a **product repository**, point the scan at your app source and fail the job on errors:
 
@@ -26,7 +32,7 @@ One AST scan; multiple emitters.
 
 ## Pre-commit
 
-See [pre-commit.md](./pre-commit.md) for husky / pre-commit snippets (`capya11y scan --fail-on error --plain`).
+See [Pre-commit](/pre-commit) for husky / pre-commit snippets (`capya11y scan --fail-on error --plain`).
 
 ## Evidence / VPAT / ACR narrative
 

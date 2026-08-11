@@ -65,8 +65,17 @@ pnpm capya11y pr packages/fixtures/demo --safe --dry-run
 - `@capya11y/rules-patternfly` — PatternFly v6 pack (+ Wizard, Drawer, DualList, …)
 - `@capya11y/fixtures` — demo + test fixtures
 
-## Docs
+## Docs site (DocsLit)
 
+```bash
+pnpm docs:dev        # http://localhost:3000
+pnpm docs:validate   # links, frontmatter, sidebar
+pnpm docs:build      # static site → docs-dist/
+```
+
+Source pages live under [`docs/`](docs/); site config is [`docslit.json`](docslit.json).
+
+- [Introduction](docs/introduction.md)
 - [Architecture](docs/architecture.md)
 - [Rule authoring](docs/rule-authoring.md) — templates, include/exclude, ignore-with-reason
 - [Pre-commit](docs/pre-commit.md)

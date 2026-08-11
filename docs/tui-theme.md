@@ -1,3 +1,9 @@
+---
+title: TUI theme
+tag: Reference
+readtime: 2 min read
+---
+
 # TUI theme (accessible colors)
 
 The Ink CLI theme lives in `packages/cli/src/theme/tokens.ts`.

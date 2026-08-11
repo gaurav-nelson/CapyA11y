@@ -1,3 +1,9 @@
+---
+title: Rule authoring
+tag: Guide
+readtime: 6 min read
+---
+
 # Rule authoring
 
 Rules live as YAML under:
