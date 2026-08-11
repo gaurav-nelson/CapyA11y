@@ -1,0 +1,64 @@
+name: CapyA11y
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+jobs:
+  test:
+    name: Unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "pnpm"
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+      - run: pnpm test
+
+  a11y-demo-sarif:
+    name: Demo scan + SARIF / evidence
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "pnpm"
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+
+      - name: Scan demo fixture (informational)
+        run: |
+          pnpm capya11y scan packages/fixtures/demo/BrokenPage.tsx \
+            --sarif \
+            --fail-on never \
+            --out capya11y.sarif
+          pnpm capya11y report packages/fixtures/demo \
+            --out capya11y-evidence.md
+
+      - name: Upload SARIF
+        uses: github/codeql-action/upload-sarif@v3
+        continue-on-error: true
+        with:
+          sarif_file: capya11y.sarif
+          category: capya11y
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: capya11y-evidence
+          path: |
+            capya11y.sarif
+            capya11y-evidence.md

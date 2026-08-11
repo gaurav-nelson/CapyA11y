@@ -1,0 +1,25 @@
+id: pf-duallist-aria-labels
+pack: patternfly-v6
+severity: error
+wcag: ["1.3.1", "4.1.2"]
+autofix: suggest
+message: >
+  DualListSelector should provide accessible names for available and
+  chosen lists (availableOptionsTitle / chosenOptionsTitle or aria props).
+helpUrl: https://www.patternfly.org/components/dual-list-selector/accessibility
+education: >
+  Dual list selectors expose two listboxes. Each needs a clear name
+  describing available vs chosen options.
+detect:
+  component: DualListSelector
+  from: "@patternfly/react-core"
+  when:
+    missingAnyOfProps:
+      - "availableOptionsTitle"
+      - "chosenOptionsTitle"
+      - "aria-labelledby"
+fix:
+  addProp:
+    availableOptionsTitle: "Available"
+    chosenOptionsTitle: "Chosen"
+  suggestMessage: Customize titles to match the option domain.

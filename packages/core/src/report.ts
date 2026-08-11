@@ -1,6 +1,8 @@
 import type { ApplyResult, Finding, ScanResult } from "./types.js";
+import { formatSarif } from "./sarif.js";
+import { formatEvidenceReport } from "./evidence.js";
 
-export type ReportFormat = "plain" | "json" | "markdown";
+export type ReportFormat = "plain" | "json" | "markdown" | "sarif" | "evidence";
 
 function severityLabel(severity: Finding["severity"]): string {
   switch (severity) {
@@ -103,17 +105,33 @@ export function formatReport(
     return JSON.stringify(data, null, 2) + "\n";
   }
   if (Array.isArray(data)) {
-    return format === "markdown"
-      ? formatScanMarkdown({
-          findings: data,
-          filesScanned: 0,
-          rulesLoaded: 0,
-          packs: [],
-        })
-      : formatFindingsPlain(data);
+    const asScan: ScanResult = {
+      findings: data,
+      filesScanned: 0,
+      rulesLoaded: 0,
+      packs: [],
+    };
+    if (format === "markdown") return formatScanMarkdown(asScan);
+    if (format === "sarif") return formatSarif(asScan);
+    if (format === "evidence") return formatEvidenceReport(asScan);
+    return formatFindingsPlain(data);
   }
   if ("filesScanned" in data) {
-    return format === "markdown" ? formatScanMarkdown(data) : formatFindingsPlain(data.findings);
+    if (format === "markdown") return formatScanMarkdown(data);
+    if (format === "sarif") return formatSarif(data);
+    if (format === "evidence") return formatEvidenceReport(data);
+    return formatFindingsPlain(data.findings);
+  }
+  if (format === "evidence") {
+    return formatEvidenceReport(
+      {
+        findings: data.findings,
+        filesScanned: 0,
+        rulesLoaded: 0,
+        packs: [],
+      },
+      data,
+    );
   }
   return formatApplyPlain(data);
 }

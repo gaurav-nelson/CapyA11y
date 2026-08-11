@@ -83,7 +83,11 @@ export const ConfigSchema = z.object({
   ignore: z.array(z.string()).default([...DEFAULT_IGNORE]),
   autofix: AutofixTierSchema.default("safe"),
   theme: z.enum(["auto", "high-contrast"]).default("auto"),
+  /** PatternFly major version for pack selection / future multi-version packs */
+  patternflyVersion: z.enum(["v5", "v6"]).default("v6"),
   severityOverrides: z.record(SeveritySchema).optional(),
+  /** Fail CI when scan finds severity >= this (errors always fail when failOn is error) */
+  failOn: z.enum(["error", "warning", "never"]).default("error"),
 });
 
 export type CapyConfig = z.infer<typeof ConfigSchema>;

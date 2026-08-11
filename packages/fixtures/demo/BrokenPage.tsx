@@ -5,6 +5,8 @@ import {
   Avatar,
   Button,
   Checkbox,
+  DrawerPanelContent,
+  DualListSelector,
   FormGroup,
   Modal,
   Switch,
@@ -13,6 +15,7 @@ import {
   TabTitleText,
   TextInput,
   MenuToggle,
+  Wizard,
 } from "@patternfly/react-core";
 import { Table, Thead, Tr, Th, Tbody, Td } from "@patternfly/react-table";
 import { SearchIcon, EllipsisVIcon } from "@patternfly/react-icons";
@@ -81,6 +84,14 @@ export function BrokenPage() {
       <Checkbox />
 
       <iframe src="/embed" />
+
+      <Wizard steps={[]} />
+
+      <DrawerPanelContent>
+        <p>Details</p>
+      </DrawerPanelContent>
+
+      <DualListSelector />
     </div>
   );
 }

@@ -15,7 +15,7 @@ export function InitView({ theme, cwd }: { theme: Theme; cwd: string }) {
     } catch (e) {
       setError(e instanceof Error ? e.message : String(e));
     }
-    const t = setTimeout(() => exit(), 50);
+    const t = setTimeout(() => exit(), 80);
     return () => clearTimeout(t);
   }, [cwd, exit]);
 
@@ -31,8 +31,16 @@ export function InitView({ theme, cwd }: { theme: Theme; cwd: string }) {
             ✓ OK Wrote {path}
           </Text>
           <Text color={theme.colorEnabled ? theme.muted : undefined}>
-            Enabled packs: wcag-core, patternfly-v6 · autofix: safe · theme: auto
+            Packs: wcag-core, patternfly-v6 · autofix: safe · failOn: error · PF v6
           </Text>
+          <Box flexDirection="column" marginTop={1}>
+            <Text bold>60-second demo</Text>
+            <Text>  pnpm capya11y scan packages/fixtures/demo/BrokenPage.tsx</Text>
+            <Text>  pnpm capya11y fix packages/fixtures/demo/BrokenPage.tsx --safe --dry-run</Text>
+            <Text>  pnpm capya11y explain pf-alert-toast-live-region</Text>
+            <Text>  pnpm capya11y report packages/fixtures/demo --out evidence.md</Text>
+            <Text>  pnpm capya11y suggest packages/fixtures/demo --json</Text>
+          </Box>
         </>
       )}
     </Box>

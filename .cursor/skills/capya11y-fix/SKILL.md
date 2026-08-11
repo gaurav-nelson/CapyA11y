@@ -23,19 +23,32 @@ pnpm capya11y scan <path> --json
 pnpm capya11y fix <path> --safe --json
 ```
 
-4. For remaining `suggest` findings (e.g. missing `aria-label` copy):
-   - Infer concise, purpose-based label text from icons, nearby headings, or control context.
-   - Prefer PatternFly props (`spinnerAriaLabel`, `fieldId`, `isLiveRegion`, `isAriaDisabled`) over raw ARIA when documented by PF.
-   - Propose edits for user approval; do not invent long marketing copy.
+4. For remaining `suggest` findings, get deterministic proposals then refine:
+
+```bash
+pnpm capya11y suggest <path> --json
+```
+
+   - Use `suggestedProp` / `suggestedValue` as a starting point.
+   - Prefer PatternFly props (`spinnerAriaLabel`, `fieldId`, `isLiveRegion`, `isAriaDisabled`, `navAriaLabel`) over raw ARIA when PF documents them.
+   - Infer final copy from icons (`SearchIcon` → "Search"), nearby headings, or control context.
+   - **Always ask the user to approve** suggest-tier edits before applying. Never silent-apply labels.
 
 5. Summarize for the developer:
    - What was fixed automatically
-   - What still needs human wording
+   - What still needs human wording (list suggestions + your refined copy)
    - WCAG criteria + help URLs from each finding
-   - One-line education per rule (from `education` / `capya11y explain <id>`)
+   - One-line education per rule (`capya11y explain <id> --plain`)
+
+6. Optional evidence for PRs / VPAT narratives:
+
+```bash
+pnpm capya11y report <path> --out evidence.md
+```
 
 ## Rules of thumb
 
 - Never apply `manual` tier changes without explicit user direction.
 - Do not remove intentional `aria-*` without explaining why.
 - After edits, re-scan with `--json` to confirm remaining issues.
+- `requiresApproval: true` on every label suggestion is intentional — trust is the product.

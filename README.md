@@ -1,15 +1,20 @@
 # CapyA11y (Capy-Ally)
 
-Automated accessibility remediation agent for React/TSX — with WCAG Core and PatternFly v6 rule packs, an accessible [Ink](https://github.com/vadimdemedes/ink) TUI, and Cursor agent skills.
+Automated accessibility **remediation** agent for React/TSX — WCAG Core + PatternFly v6 rule packs, an accessible [Ink](https://github.com/vadimdemedes/ink) TUI, Cursor skills, CI SARIF, and VPAT-oriented evidence reports.
 
-## Quick start
+> PatternFly-native fixes developers trust. YAML rules a11y leads own. Just-in-time WCAG education — in the IDE and in CI.
+
+## Quick start (60 seconds)
 
 ```bash
 pnpm install
 pnpm build
-pnpm capya11y scan packages/fixtures/demo
-pnpm capya11y fix packages/fixtures/demo --safe --dry-run
-pnpm capya11y explain pf-button-icon-only-name
+pnpm capya11y init --plain
+pnpm capya11y scan packages/fixtures/demo/BrokenPage.tsx
+pnpm capya11y fix packages/fixtures/demo/BrokenPage.tsx --safe --dry-run
+pnpm capya11y explain pf-alert-toast-live-region --plain
+pnpm capya11y suggest packages/fixtures/demo --json
+pnpm capya11y report packages/fixtures/demo --out evidence.md
 ```
 
 ## Commands
@@ -19,17 +24,38 @@ pnpm capya11y explain pf-button-icon-only-name
 | `capya11y scan <path>` | Find accessibility issues |
 | `capya11y fix <path> --safe` | Apply safe autofixes |
 | `capya11y fix <path> --dry-run` | Preview patches |
+| `capya11y suggest <path>` | Propose suggest-tier labels (never auto-applies) |
+| `capya11y report <path>` | Evidence / VPAT markdown report |
 | `capya11y explain <rule-id>` | Just-in-time learning |
-| `capya11y init` | Create `.capya11y.yml` |
+| `capya11y init` | Create `.capya11y.yml` + demo tips |
 
-Flags: `--json`, `--plain`, `--pack <name>`, `NO_COLOR=1`.
+### CI / machine flags
+
+| Flag | Purpose |
+|------|---------|
+| `--json` | Agent / script consumption |
+| `--sarif` | GitHub Code Scanning |
+| `--evidence` | Evidence markdown on scan |
+| `--fail-on error\|warning\|never` | CI gate |
+| `--out <file>` | Write report to disk |
+| `--pack <name>` | `wcag-core`, `patternfly-v6`, `pf`, … |
+| `--patternfly-version v6` | Pack version selection |
+| `--plain` / `NO_COLOR=1` | Accessible non-TUI output |
+
+## Moat (why not “just eslint / axe”)
+
+1. **Design-system intelligence** — PatternFly props (`isLiveRegion`, `fieldId`, `navAriaLabel`), not only generic JSX.
+2. **Remediation tiers** — `safe` / `suggest` / `manual` so CI can trust autofix.
+3. **YAML packs a11y leads own** — Vale-style authorship without ESLint plugin PRs.
+4. **Evidence export** — WCAG-mapped reports for Section 508 / VPAT engineering narratives.
+5. **Hybrid agent** — deterministic core + Cursor skills for approved label copy.
 
 ## Packages
 
-- `@capya11y/core` — scan, match, fix, report
+- `@capya11y/core` — scan, match, fix, SARIF, evidence, label suggest
 - `@capya11y/cli` — Ink TUI CLI
 - `@capya11y/rules-wcag` — WCAG 2.2 AA starter pack
-- `@capya11y/rules-patternfly` — PatternFly v6 starter pack
+- `@capya11y/rules-patternfly` — PatternFly v6 pack (+ Wizard, Drawer, DualList, …)
 - `@capya11y/fixtures` — demo + test fixtures
 
 ## Docs
@@ -38,3 +64,4 @@ Flags: `--json`, `--plain`, `--pack <name>`, `NO_COLOR=1`.
 - [Rule authoring](docs/rule-authoring.md)
 - [TUI theme](docs/tui-theme.md)
 - [Demo script](docs/demo-script.md)
+- [CI & evidence](docs/ci-and-evidence.md)

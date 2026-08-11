@@ -46,6 +46,7 @@ export interface ScanOptions {
   globs?: string[];
   ignore?: string[];
   configPath?: string;
+  patternflyVersion?: "v5" | "v6";
 }
 
 export interface ScanResult {

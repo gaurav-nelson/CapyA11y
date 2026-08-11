@@ -1,0 +1,22 @@
+id: pf-table-select-aria-label
+pack: patternfly-v6
+severity: warning
+wcag: ["1.3.1", "4.1.2"]
+autofix: manual
+message: >
+  Selectable table cells (Td select) should configure an aria-label on
+  the selection control (e.g. "Select row Ada" or "Select all rows").
+helpUrl: https://www.patternfly.org/components/table/accessibility
+education: >
+  Row selection checkboxes have no visible text; provide a name that
+  includes the row identity when possible.
+detect:
+  component: Td
+  from: "@patternfly/react-table"
+  when:
+    hasProps: ["select"]
+example:
+  before: |
+    <Td select={{ onSelect, isSelected }} />
+  after: |
+    <Td select={{ onSelect, isSelected, props: { "aria-label": "Select row Ada" } }} />

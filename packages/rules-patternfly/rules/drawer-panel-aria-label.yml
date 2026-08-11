@@ -1,0 +1,20 @@
+id: pf-drawer-panel-aria-label
+pack: patternfly-v6
+severity: error
+wcag: ["1.3.1", "4.1.2"]
+autofix: suggest
+message: >
+  DrawerPanelContent needs an accessible name via aria-label or
+  aria-labelledby when it acts as a complementary region.
+helpUrl: https://www.patternfly.org/components/drawer/accessibility
+education: >
+  Drawer panels are often landmarks. Name them so users know what
+  content the panel contains.
+detect:
+  component: DrawerPanelContent
+  from: "@patternfly/react-core"
+  when:
+    missingAnyOfProps: ["aria-label", "aria-labelledby"]
+fix:
+  addProp:
+    aria-label: "{{inferPurpose}}"

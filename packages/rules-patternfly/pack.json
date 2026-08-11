@@ -1,0 +1,8 @@
+{
+  "id": "patternfly-v6",
+  "name": "PatternFly v6",
+  "patternflyVersion": "v6",
+  "description": "Design-system-aware accessibility rules for @patternfly/react-core and react-table (PF v6).",
+  "docs": "https://www.patternfly.org/accessibility/develop",
+  "aliases": ["patternfly", "pf", "pf-v6"]
+}

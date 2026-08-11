@@ -26,4 +26,14 @@ Developer → Ink TUI / Cursor skill → core.scan / core.applyFixes → YAML pa
 
 ## CI / agents
 
-Prefer `capya11y scan . --json` and `capya11y fix . --safe --plain` so output is machine-readable and color-independent.
+Prefer `capya11y scan . --json` / `--sarif` and `capya11y fix . --safe --plain` so output is machine-readable and color-independent.
+
+See [ci-and-evidence.md](./ci-and-evidence.md) for GitHub Code Scanning, `--fail-on`, and VPAT evidence reports.
+
+## Moat layers
+
+1. PatternFly pack + `pack.json` version metadata (`patternflyVersion`)
+2. Safe / suggest / manual remediation tiers
+3. YAML packs authored by a11y leads
+4. SARIF + evidence reports for 508/VPAT narratives
+5. `capya11y suggest` + Cursor skill approval loop (never silent label writes)

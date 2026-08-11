@@ -1,0 +1,17 @@
+id: pf-form-helper-describedby
+pack: patternfly-v6
+severity: warning
+wcag: ["1.3.1", "3.3.2"]
+autofix: manual
+message: >
+  When HelperText accompanies a FormGroup control, ensure the control
+  references it with aria-describedby matching the helper text id.
+helpUrl: https://www.patternfly.org/components/form/accessibility
+education: >
+  Helper text must be programmatically associated so assistive
+  technologies announce instructions and errors with the field.
+detect:
+  component: HelperText
+  from: "@patternfly/react-core"
+  when:
+    missingAnyOfProps: ["id", "aria-live", "isLiveRegion"]

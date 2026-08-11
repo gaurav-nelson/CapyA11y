@@ -1,0 +1,7 @@
+{
+  "id": "wcag-core",
+  "name": "WCAG 2.2 Core",
+  "description": "High-confidence HTML/JSX WCAG 2.2 AA starter rules for static remediation.",
+  "docs": "https://www.w3.org/WAI/standards-guidelines/wcag/",
+  "aliases": ["wcag", "wcag22"]
+}

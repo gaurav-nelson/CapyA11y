@@ -1,0 +1,25 @@
+id: pf-wizard-nav-aria-label
+pack: patternfly-v6
+severity: error
+wcag: ["1.3.1", "4.1.2"]
+autofix: suggest
+message: >
+  Wizard should provide navAriaLabel (or equivalent) so the step
+  navigation landmark has an accessible name.
+helpUrl: https://www.patternfly.org/components/wizard/accessibility
+education: >
+  Wizards expose a navigation region. Without a name, assistive
+  technology users cannot distinguish it from other nav landmarks.
+detect:
+  component: Wizard
+  from: "@patternfly/react-core"
+  when:
+    missingAnyOfProps: ["navAriaLabel", "aria-label", "aria-labelledby"]
+fix:
+  addProp:
+    navAriaLabel: "{{inferPurpose}}"
+example:
+  before: |
+    <Wizard steps={steps} />
+  after: |
+    <Wizard steps={steps} navAriaLabel="Create resource steps" />

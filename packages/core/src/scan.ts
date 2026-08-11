@@ -69,7 +69,9 @@ function resolveFiles(roots: string[], ignore: string[]): string[] {
 
 export async function scan(options: ScanOptions): Promise<ScanResult> {
   const packDirs = options.packDirs?.length ? options.packDirs : defaultPackDirs();
-  const rules = loadPacks(packDirs, options.packs);
+  const rules = loadPacks(packDirs, options.packs, {
+    patternflyVersion: options.patternflyVersion,
+  });
   const ignore = options.ignore ?? DEFAULT_IGNORE;
   const files = resolveFiles(options.roots, ignore);
 

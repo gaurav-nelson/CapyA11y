@@ -6,12 +6,20 @@ import { RuleSchema, type Rule } from "./schema.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
+export interface PackManifest {
+  id: string;
+  name?: string;
+  patternflyVersion?: "v5" | "v6";
+  description?: string;
+  docs?: string;
+  aliases?: string[];
+}
+
 /** Resolve default pack directories relative to monorepo packages/ */
 export function defaultPackDirs(): string[] {
   const candidates = [
     join(__dirname, "../../rules-wcag/rules"),
     join(__dirname, "../../rules-patternfly/rules"),
-    // when running from dist/
     join(__dirname, "../../../rules-wcag/rules"),
     join(__dirname, "../../../rules-patternfly/rules"),
   ];
@@ -30,21 +38,79 @@ function collectYamlFiles(dir: string): string[] {
   return out;
 }
 
+function loadPackManifestNear(rulesDir: string): PackManifest | undefined {
+  const candidates = [
+    join(rulesDir, "..", "pack.json"),
+    join(rulesDir, "pack.json"),
+  ];
+  for (const path of candidates) {
+    if (!existsSync(path)) continue;
+    try {
+      return JSON.parse(readFileSync(path, "utf8")) as PackManifest;
+    } catch {
+      return undefined;
+    }
+  }
+  return undefined;
+}
+
 export function loadRuleFile(path: string): Rule {
   const raw = readFileSync(path, "utf8");
   const data = parseYaml(raw);
   return RuleSchema.parse(data);
 }
 
-export function loadPacks(dirs: string[], packFilter?: string[]): Rule[] {
+function normalizePackFilters(
+  packFilter: string[] | undefined,
+  patternflyVersion?: "v5" | "v6",
+): string[] | undefined {
+  if (!packFilter || packFilter.length === 0) {
+    if (patternflyVersion === "v5") {
+      // v5 pack not shipped yet — keep v6 id but callers may warn
+      return undefined;
+    }
+    return undefined;
+  }
+  const aliases: Record<string, string> = {
+    wcag: "wcag-core",
+    wcag22: "wcag-core",
+    patternfly: "patternfly-v6",
+    pf: "patternfly-v6",
+    "pf-v6": "patternfly-v6",
+    "patternfly-v6": "patternfly-v6",
+    "pf-v5": "patternfly-v5",
+    "patternfly-v5": "patternfly-v5",
+  };
+  return packFilter.map((p) => aliases[p] ?? p);
+}
+
+export function loadPacks(
+  dirs: string[],
+  packFilter?: string[],
+  options?: { patternflyVersion?: "v5" | "v6" },
+): Rule[] {
+  const filters = normalizePackFilters(packFilter, options?.patternflyVersion);
   const rules: Rule[] = [];
   const seen = new Set<string>();
+  const manifests: PackManifest[] = [];
 
   for (const dir of dirs) {
+    const manifest = loadPackManifestNear(dir);
+    if (manifest) manifests.push(manifest);
+
     for (const file of collectYamlFiles(dir)) {
       try {
         const rule = loadRuleFile(file);
-        if (packFilter && packFilter.length > 0 && !packFilter.includes(rule.pack)) {
+        if (filters && filters.length > 0 && !filters.includes(rule.pack)) {
+          continue;
+        }
+        // If PF version requested and pack is PF-scoped, skip mismatched manifests
+        if (
+          options?.patternflyVersion &&
+          rule.pack.startsWith("patternfly-") &&
+          manifest?.patternflyVersion &&
+          manifest.patternflyVersion !== options.patternflyVersion
+        ) {
           continue;
         }
         if (seen.has(rule.id)) continue;
@@ -62,4 +128,8 @@ export function loadPacks(dirs: string[], packFilter?: string[]): Rule[] {
 
 export function findRuleById(rules: Rule[], id: string): Rule | undefined {
   return rules.find((r) => r.id === id);
+}
+
+export function resolvePackIdForVersion(version: "v5" | "v6"): string {
+  return version === "v5" ? "patternfly-v5" : "patternfly-v6";
 }
