@@ -1,0 +1,20 @@
+id: wcag-poor-link-text
+pack: wcag-core
+severity: warning
+wcag: ["2.4.4", "2.4.9"]
+autofix: manual
+message: >
+  Link text is generic (e.g. "click here"). Use text that describes the
+  destination out of context.
+helpUrl: https://www.w3.org/WAI/WCAG22/Understanding/link-purpose-in-context.html
+education: >
+  Screen reader users often browse links as a list. Generic phrases
+  like "click here" provide no destination context.
+detect:
+  when:
+    poorLinkText: true
+example:
+  before: |
+    <a href="/docs">click here</a>
+  after: |
+    <a href="/docs">Read the documentation</a>

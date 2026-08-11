@@ -1,0 +1,20 @@
+id: pf-switch-has-name
+pack: patternfly-v6
+severity: error
+wcag: ["4.1.2"]
+autofix: suggest
+message: >
+  Switch needs a static accessible name via label, aria-label, or
+  aria-labelledby describing the ON state.
+helpUrl: https://www.patternfly.org/components/switch/accessibility
+education: >
+  Use a label that describes the on state (e.g. "Show details"), not
+  a label that toggles with state.
+detect:
+  component: Switch
+  from: "@patternfly/react-core"
+  when:
+    missingAnyOfProps: ["label", "aria-label", "aria-labelledby"]
+fix:
+  addProp:
+    aria-label: "{{inferPurpose}}"

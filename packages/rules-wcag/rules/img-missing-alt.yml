@@ -1,0 +1,25 @@
+id: wcag-img-missing-alt
+pack: wcag-core
+severity: error
+wcag: ["1.1.1"]
+autofix: suggest
+message: >
+  Image is missing an alt attribute. Provide a short text alternative,
+  or alt="" if the image is decorative.
+helpUrl: https://www.w3.org/WAI/WCAG22/Understanding/non-text-content.html
+education: >
+  Screen reader users rely on alt text to understand images. Decorative
+  images should use empty alt so they are ignored.
+detect:
+  tagName: img
+  when:
+    missingAlt: true
+fix:
+  addProp:
+    alt: "{{inferPurpose}}"
+  suggestMessage: Describe the image, or use alt="" if decorative.
+example:
+  before: |
+    <img src="/chart.png" />
+  after: |
+    <img src="/chart.png" alt="Quarterly revenue chart" />

@@ -1,0 +1,21 @@
+id: wcag-clickable-noninteractive
+pack: wcag-core
+severity: error
+wcag: ["2.1.1", "2.4.7", "4.1.2"]
+autofix: manual
+message: >
+  Non-interactive element has onClick but no keyboard support or
+  appropriate role. Use a <button> or <a>, or add role, tabIndex, and
+  keyboard handlers.
+helpUrl: https://www.w3.org/WAI/WCAG22/Understanding/keyboard.html
+education: >
+  Pointer-only controls exclude keyboard and many assistive technology
+  users. Prefer native interactive elements.
+detect:
+  when:
+    clickableWithoutKeyboard: true
+example:
+  before: |
+    <div onClick={save}>Save</div>
+  after: |
+    <button type="button" onClick={save}>Save</button>

@@ -1,0 +1,18 @@
+id: pf-is-aria-disabled
+pack: patternfly-v6
+severity: info
+wcag: ["4.1.2"]
+autofix: manual
+message: >
+  If a disabled control still needs a tooltip explanation, prefer
+  isAriaDisabled over isDisabled so the control remains focusable.
+helpUrl: https://www.patternfly.org/accessibility/develop
+education: >
+  isDisabled removes the control from the tab order, hiding tooltip
+  content from keyboard users. isAriaDisabled keeps focus while
+  exposing the disabled state to AT.
+detect:
+  component: Button
+  from: "@patternfly/react-core"
+  when:
+    hasIsDisabled: true

@@ -1,0 +1,25 @@
+id: pf-modal-accessible-name
+pack: patternfly-v6
+severity: error
+wcag: ["4.1.2"]
+autofix: suggest
+message: >
+  Modal needs an accessible name via title, aria-label, or
+  aria-labelledby.
+helpUrl: https://www.patternfly.org/components/modal/accessibility
+education: >
+  Dialogs must expose a name that screen readers announce when the
+  modal opens.
+detect:
+  component: Modal
+  from: "@patternfly/react-core"
+  when:
+    missingAnyOfProps: ["title", "aria-label", "aria-labelledby"]
+fix:
+  addProp:
+    aria-label: "{{inferPurpose}}"
+example:
+  before: |
+    <Modal isOpen onClose={onClose}>{children}</Modal>
+  after: |
+    <Modal isOpen onClose={onClose} title="Delete resource">{children}</Modal>

@@ -1,0 +1,16 @@
+id: wcag-svg-title-missing
+pack: wcag-core
+severity: warning
+wcag: ["1.1.1"]
+autofix: manual
+message: >
+  Decorative or informative non-text content should have a text
+  alternative strategy (alt, aria-label, or aria-hidden).
+helpUrl: https://www.w3.org/WAI/WCAG22/Understanding/non-text-content.html
+education: >
+  When using custom graphics, ensure assistive technologies get an
+  equivalent description or that purely decorative graphics are hidden.
+detect:
+  tagName: svg
+  when:
+    missingAnyOfProps: ["aria-label", "aria-labelledby", "aria-hidden", "role"]

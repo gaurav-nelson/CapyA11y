@@ -1,0 +1,18 @@
+{
+  "name": "capya11y",
+  "private": true,
+  "version": "0.1.0",
+  "description": "CapyA11y (Capy-Ally) — automated accessibility remediation agent",
+  "type": "module",
+  "scripts": {
+    "build": "pnpm --filter @capya11y/core run build && pnpm --filter @capya11y/cli run build",
+    "test": "pnpm --filter @capya11y/core run test && pnpm --filter @capya11y/cli run test",
+    "capya11y": "node packages/cli/dist/bin.js",
+    "dev": "node --import tsx packages/cli/src/bin.tsx"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "packageManager": "pnpm@11.21.0",
+  "license": "MIT"
+}

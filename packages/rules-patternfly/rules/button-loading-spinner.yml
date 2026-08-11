@@ -1,0 +1,21 @@
+id: pf-button-loading-spinner-name
+pack: patternfly-v6
+severity: error
+wcag: ["4.1.2"]
+autofix: suggest
+message: >
+  Loading Button should provide spinnerAriaLabel (or labelledBy /
+  valueText) so the busy state is announced.
+helpUrl: https://www.patternfly.org/components/button/accessibility
+education: >
+  When a button shows a loading spinner, assistive technologies need
+  a name for that status.
+detect:
+  component: Button
+  from: "@patternfly/react-core"
+  when:
+    propTruthy: ["isLoading"]
+    missingAnyOfProps: ["spinnerAriaLabel", "spinnerAriaValueText", "spinnerAriaLabelledBy"]
+fix:
+  addProp:
+    spinnerAriaLabel: "{{inferLoading}}"

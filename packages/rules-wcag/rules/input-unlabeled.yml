@@ -1,0 +1,26 @@
+id: wcag-input-unlabeled
+pack: wcag-core
+severity: error
+wcag: ["1.3.1", "3.3.2", "4.1.2"]
+autofix: suggest
+message: >
+  Form control has no accessible name. Associate a visible label or
+  provide aria-label / aria-labelledby.
+helpUrl: https://www.w3.org/WAI/WCAG22/Understanding/labels-or-instructions.html
+education: >
+  Labels tell users what to enter and are announced by assistive
+  technologies when the control receives focus.
+detect:
+  tagName: input
+  when:
+    unlabeledControl: true
+fix:
+  addProp:
+    aria-label: "{{inferPurpose}}"
+  suggestMessage: Prefer a visible <label htmlFor> when possible.
+example:
+  before: |
+    <input type="text" name="email" />
+  after: |
+    <label htmlFor="email">Email</label>
+    <input id="email" type="text" name="email" />

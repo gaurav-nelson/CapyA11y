@@ -1,0 +1,19 @@
+id: wcag-iframe-missing-title
+pack: wcag-core
+severity: error
+wcag: ["2.4.1", "4.1.2"]
+autofix: suggest
+message: >
+  iframe is missing a title. Provide a concise title describing the
+  framed content.
+helpUrl: https://www.w3.org/WAI/WCAG22/Understanding/bypass-blocks.html
+education: >
+  Screen readers announce iframe titles so users can decide whether to
+  enter the frame.
+detect:
+  tagName: iframe
+  when:
+    missingProps: ["title", "aria-label"]
+fix:
+  addProp:
+    title: "{{inferPurpose}}"

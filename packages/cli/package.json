@@ -1,0 +1,28 @@
+{
+  "name": "@capya11y/cli",
+  "version": "0.1.0",
+  "type": "module",
+  "bin": {
+    "capya11y": "./dist/bin.js",
+    "a11ylint": "./dist/bin.js"
+  },
+  "main": "./dist/bin.js",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "vitest run",
+    "start": "node --import tsx src/bin.tsx"
+  },
+  "dependencies": {
+    "@capya11y/core": "workspace:*",
+    "ink": "^5.2.0",
+    "ink-spinner": "^5.0.0",
+    "react": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.10",
+    "@types/react": "^18.3.18",
+    "tsx": "^4.19.3",
+    "typescript": "^5.8.2",
+    "vitest": "^3.0.8"
+  }
+}

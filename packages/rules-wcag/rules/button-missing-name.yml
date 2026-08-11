@@ -1,0 +1,19 @@
+id: wcag-button-missing-name
+pack: wcag-core
+severity: error
+wcag: ["4.1.2"]
+autofix: suggest
+message: >
+  Button has no accessible name. Provide visible text or aria-label.
+helpUrl: https://www.w3.org/WAI/WCAG22/Understanding/name-role-value.html
+education: >
+  Buttons must expose a name so assistive technologies can announce
+  their purpose.
+detect:
+  tagName: button
+  when:
+    noVisibleText: true
+    missingAnyOfProps: ["aria-label", "aria-labelledby"]
+fix:
+  addProp:
+    aria-label: "{{inferFromIconOrContext}}"

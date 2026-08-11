@@ -1,0 +1,30 @@
+id: pf-formgroup-fieldid
+pack: patternfly-v6
+severity: error
+wcag: ["1.3.1", "3.3.2"]
+autofix: suggest
+message: >
+  FormGroup with a label should set fieldId matching the control id
+  so the label is programmatically associated.
+helpUrl: https://www.patternfly.org/components/form/accessibility
+education: >
+  PatternFly FormGroup uses fieldId to wire htmlFor on the label.
+  Without it, the visible label may not be linked to the input.
+detect:
+  component: FormGroup
+  from: "@patternfly/react-core"
+  when:
+    formGroupMissingFieldId: true
+fix:
+  addProp:
+    fieldId: "{{inferPurpose}}"
+  suggestMessage: Set fieldId to the same value as the control's id.
+example:
+  before: |
+    <FormGroup label="Name">
+      <TextInput id="name" />
+    </FormGroup>
+  after: |
+    <FormGroup label="Name" fieldId="name">
+      <TextInput id="name" />
+    </FormGroup>

@@ -1,0 +1,11 @@
+{
+  "name": "@capya11y/rules-wcag",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "WCAG 2.2 AA starter rule pack for CapyA11y",
+  "scripts": {
+    "build": "node -e \"process.exit(0)\"",
+    "test": "node -e \"process.exit(0)\""
+  },
+  "files": ["rules"]
+}
