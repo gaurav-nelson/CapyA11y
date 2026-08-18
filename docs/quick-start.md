@@ -58,13 +58,13 @@ pnpm capya11y explain pf-button-icon-only-name --plain
 
 **Success:** You get severity, WCAG, remediation, and education without leaving the terminal.
 
-## Optional: show the judges (demo narrative)
+## Optional: explore other ways to run it
 
-| Beat | Command / action |
+| Goal | Command / action |
 |------|------------------|
-| Tool is accessible too | `NO_COLOR=1 pnpm capya11y scan … --plain` |
-| Machine-readable | `pnpm capya11y scan … --json \| head` |
-| Cursor path | On `BrokenPage.tsx`: “Fix accessibility issues with CapyA11y.” |
+| Confirm the tool itself is accessible | `NO_COLOR=1 pnpm capya11y scan … --plain` |
+| Machine-readable output | `pnpm capya11y scan … --json \| head` |
+| Fix from inside Cursor | On `BrokenPage.tsx`: “Fix accessibility issues with CapyA11y.” |
 
 ## You are done when
 

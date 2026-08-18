@@ -52,7 +52,7 @@ pnpm capya11y pr packages/fixtures/demo --safe --dry-run
 | `--url <http...>` | Live app scan (axe + tabbable); path optional |
 | `--at [auto\|voiceover\|nvda]` | Guidepup VoiceOver (macOS) / NVDA (Windows) |
 
-## Moat (why not “just eslint / axe”)
+## Why not just eslint / axe
 
 1. **Design-system intelligence** — PatternFly props (`isLiveRegion`, `fieldId`, `navAriaLabel`), not only generic JSX.
 2. **Remediation tiers** — `safe` / `suggest` / `manual` so CI can trust autofix.

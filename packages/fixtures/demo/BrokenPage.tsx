@@ -20,7 +20,7 @@ import {
 import { Table, Thead, Tr, Th, Tbody, Td } from "@patternfly/react-table";
 import { SearchIcon, EllipsisVIcon } from "@patternfly/react-icons";
 
-/** Intentionally inaccessible demo page for CapyA11y Innovation Days. */
+/** Intentionally inaccessible demo page used to exercise CapyA11y's rules. */
 export function BrokenPage() {
   return (
     <div>

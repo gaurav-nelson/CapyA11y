@@ -150,7 +150,7 @@ Implement as `packages/cli/src/commands/pr.ts` using `child_process` + existing 
 Light enhancement to `packages/core/src/evidence.ts`:
 
 - Optional “ACR-oriented” section: group by WCAG with placeholder Support columns (`Supports` / `Partially Supports` / `Does Not Support` / `Not Evaluated`) derived from finding counts, with a clear static-analysis disclaimer.
-- Sample excerpt in [ship-in-ci.md](../docs/ship-in-ci.md) for hackathon judges.
+- Sample excerpt in [ship-in-ci.md](../docs/ship-in-ci.md) for reviewers.
 
 ## Implementation order
 

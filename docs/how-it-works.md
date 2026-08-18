@@ -44,7 +44,7 @@ CT mounts inject `data-capya11y-source` so runtime hits can map back to files. L
 
 Severity always includes text (`ERR` / `WRN` / `INF`) and a symbol. Honor `NO_COLOR`, `FORCE_COLOR=0`, and `--plain`. Theme tokens live in `packages/cli/src/theme/tokens.ts`; `--theme high-contrast` brightens semantics for low-vision terminals.
 
-## Product “moat” (for appraisers)
+## Design choices that set this apart
 
 1. PatternFly pack + `pack.json` version metadata
 2. Safe / suggest / manual remediation tiers
