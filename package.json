@@ -19,6 +19,6 @@
   "packageManager": "pnpm@11.21.0",
   "license": "MIT",
   "devDependencies": {
-    "docslit": "^0.1.10"
+    "docslit": "^0.1.11"
   }
 }

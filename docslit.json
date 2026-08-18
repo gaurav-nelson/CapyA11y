@@ -1,6 +1,8 @@
 {
   "name": "CapyA11y",
   "description": "Automated accessibility remediation for React/TSX — WCAG Core + PatternFly.",
+  "url": "https://gaurav-nelson.github.io/CapyA11y",
+  "basePath": "/CapyA11y",
   "sidebar": [
     {
       "group": "Decide & try",
