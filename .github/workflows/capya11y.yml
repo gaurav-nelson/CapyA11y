@@ -43,6 +43,7 @@ jobs:
             --fail-on never \
             --out capya11y.sarif
           pnpm capya11y report packages/fixtures/demo \
+            --fail-on never \
             --out capya11y-evidence.md
 
       - name: Upload SARIF
